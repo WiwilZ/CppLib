@@ -1,0 +1,6 @@
+[
+{
+  "directory": "D:\\Workspace\\CLionProjects\\CppLib",
+  "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\cl.exe", "/c", "/nologo", "/Wall", "/Ox", "/arch:AVX", "/arch:AVX2", "/std:c++latest", "/EHsc", "/DNDEBUG", "/Fobuild\\.objs\\main\\windows\\x64\\release\\src\\main.cpp.obj", "src\\main.cpp"],
+  "file": "src\\main.cpp"
+}]
