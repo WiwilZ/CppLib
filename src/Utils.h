@@ -8,7 +8,7 @@
 #include <concepts>
 
 
-[[noreturn]] FORCE_INLINE void Unreachable() {
+[[noreturn]] FORCEINLINE void Unreachable() {
 #if defined(__GNUC__) || defined(__clang__)
     __builtin_unreachable();
 #elif defined(_MSC_VER)
@@ -27,11 +27,11 @@ namespace internal {
     concept from_memory = !from_register<T>;
 }
 
-FORCE_INLINE void DoNotOptimize(const internal::from_register auto& t) noexcept {
+FORCEINLINE void DoNotOptimize(const internal::from_register auto& t) noexcept {
     asm volatile("" : : "r"(t));
 }
 
-FORCE_INLINE void DoNotOptimize(const internal::from_memory auto& t) noexcept {
+FORCEINLINE void DoNotOptimize(const internal::from_memory auto& t) noexcept {
     asm volatile("" : : "m"(t) : "memory");
 }
 
@@ -43,7 +43,7 @@ namespace internal {
 #pragma optimize("", on)
 }
 
-FORCE_INLINE void DoNotOptimize(const auto& t) noexcept {
+FORCEINLINE void DoNotOptimize(const auto& t) noexcept {
     internal::DoNotOptimizeImpl(&t);
 }
 

@@ -50,7 +50,7 @@ namespace Detail {
     namespace LZCNT {
 
         template <UnsignedIntegral T>
-        FORCE_INLINE int CountLeadingZeros(T x) noexcept {
+        FORCEINLINE int CountLeadingZeros(T x) noexcept {
             constexpr int NumBits = IntegralTrait<T>::NumBits;
             if constexpr (sizeof(T) <= 2) {
                 return __lzcnt16(x) - (16 - NumBits);
@@ -75,7 +75,7 @@ namespace Detail {
     namespace BSR {
 
         template <UnsignedIntegral T>
-        FORCE_INLINE int CountLeadingZeros(T x) noexcept {
+        FORCEINLINE int CountLeadingZeros(T x) noexcept {
             constexpr int NumBits = IntegralTrait<T>::NumBits;
             unsigned long result;
             if constexpr (sizeof(T) <= 4) {
@@ -106,7 +106,7 @@ namespace Detail {
     namespace X86_X64 {
 
         template <UnsignedIntegral T>
-        FORCE_INLINE int CountLeadingZeros(T x) noexcept {
+        FORCEINLINE int CountLeadingZeros(T x) noexcept {
 #   ifdef __AVX2__
             return LZCNT::CountLeadingZeros(x);
 #   else
@@ -128,7 +128,7 @@ namespace Detail {
     namespace Arm_Arm64 {
 
         template <UnsignedIntegral T>
-        FORCE_INLINE int CountLeadingZeros(T x) noexcept {
+        FORCEINLINE int CountLeadingZeros(T x) noexcept {
             constexpr int NumBits = IntegralTrait<T>::NumBits;
             if (x == 0) {
                 return NumBits;

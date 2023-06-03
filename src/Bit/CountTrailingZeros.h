@@ -167,7 +167,7 @@ namespace Detail {
     namespace TZCNT {
 
         template <UnsignedIntegral T>
-        FORCE_INLINE int CountTrailingZeros(T x) noexcept {
+        FORCEINLINE int CountTrailingZeros(T x) noexcept {
             if constexpr (sizeof(T) <= 4) {
                 return _tzcnt_u32(x);
             } else {
@@ -189,7 +189,7 @@ namespace Detail {
     namespace BSF {
 
         template <UnsignedIntegral T>
-        FORCE_INLINE int CountTrailingZeros(T x) noexcept {
+        FORCEINLINE int CountTrailingZeros(T x) noexcept {
             constexpr int NumBits = IntegralTrait<T>::NumBits;
             unsigned long result;
             if constexpr (sizeof(T) <= 4) {
@@ -222,7 +222,7 @@ namespace Detail {
     namespace X86_X64 {
 
         template <UnsignedIntegral T>
-        FORCE_INLINE int CountTrailingZeros(T x) noexcept {
+        FORCEINLINE int CountTrailingZeros(T x) noexcept {
 #   ifdef __AVX2__
             return TZCNT::CountTrailingZeros(x);
 #   else
