@@ -11,7 +11,7 @@
 #include "Trait/DeclVal.h"
 #include "Trait/FloatingPointTrait.h"
 #include "Trait/IntegralTrait.h"
-#include "Trait/IntegralType.h"
+#include "Trait/MakeIntegerType.h"
 #include "Trait/LogicalOperation/Conjunction.h"
 #include "Trait/LogicalOperation/Disjunction.h"
 #include "Trait/LogicalOperation/Negation.h"

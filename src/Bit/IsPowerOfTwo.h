@@ -10,6 +10,6 @@
 
 
 template <IntegerType T>
-[[nodiscard]] constexpr bool IsPowerOf2(T x) noexcept {
+[[nodiscard]] constexpr bool IsPowerOfTwo(T x) noexcept {
     return x > 0 && (x & (x - 1)) == 0;
 }

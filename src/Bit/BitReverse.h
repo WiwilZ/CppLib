@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__clang__)
 extern "C" {
     unsigned short   __cdecl _byteswap_ushort(unsigned short);
     unsigned long    __cdecl _byteswap_ulong(unsigned long);

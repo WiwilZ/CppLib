@@ -4,6 +4,8 @@ build/
 
 .idea/
 
+src/main.cpp
+
 # MacOS Cache
 .DS_Store
 

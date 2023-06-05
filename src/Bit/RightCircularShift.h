@@ -45,7 +45,7 @@ template <UnsignedIntegerType T>
         }
         return Detail::Common::RightCircularShift(x, n);
 #else
-    return Detail::Common::RightCircularShift(x, n);
+        return Detail::Common::RightCircularShift(x, n);
 #endif
     } else if constexpr (sizeof(T) == 2) {
 #if __has_builtin(__builtin_rotateright16)

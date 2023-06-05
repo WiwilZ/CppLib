@@ -205,6 +205,22 @@ namespace Detail {
 #endif // BL_USE_CLZ_INTRINSICS
 
 
+    namespace MSVC {
+        template <UnsignedIntegerType T>
+        [[nodiscard]] __forceinline int BitLength(T x) noexcept {
+#if defined(BL_USE_LZCNT_BSR_INTRINSICS)
+            if (!__builtin_is_constant_evaluated()) {
+                return X86_X64::BitLength(x);
+            }
+#elif defined(BL_USE_CLZ_INTRINSICS)
+            if (!__builtin_is_constant_evaluated()) {
+                return Arm_Arm64::BitLength(x);
+            }
+#endif
+            return Common::BitLength(x);
+        }
+    } // namespace MSVC
+
 
     [[nodiscard]] constexpr int BitLength(uint16_t x) noexcept {
 #if __has_builtin(__builtin_clzs)
@@ -212,16 +228,7 @@ namespace Detail {
 #elif __has_builtin(__builtin_clz)
         return 32 - __builtin_clz(x);
 #elif defined(_MSC_VER)
-#   if defined(BL_USE_LZCNT_BSR_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return X86_X64::BitLength(x);
-        }
-#   elif defined(BL_USE_CLZ_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm_Arm64::BitLength(x);
-        }
-#   endif
-        return Common::BitLength(x);
+        return MSVC::BitLength(x);
 #else
         return Common::BitLength(x);
 #endif
@@ -231,16 +238,7 @@ namespace Detail {
 #if __has_builtin(__builtin_clz)
         return 32 - __builtin_ctz(x);
 #elif defined(_MSC_VER)
-#   if defined(BL_USE_LZCNT_BSR_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return X86_X64::BitLength(x);
-        }
-#   elif defined(BL_USE_CLZ_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm_Arm64::BitLength(x);
-        }
-#   endif
-        return Common::BitLength(x);
+        return MSVC::BitLength(x);
 #else
         return Common::BitLength(x);
 #endif
@@ -250,16 +248,7 @@ namespace Detail {
 #if __has_builtin(__builtin_clzll)
         return 64 - __builtin_clzll(x);
 #elif defined(_MSC_VER)
-#   if defined(BL_USE_LZCNT_BSR_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return X86_X64::BitLength(x);
-        }
-#   elif defined(BL_USE_CLZ_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm_Arm64::BitLength(x);
-        }
-#   endif
-        return Common::BitLength(x);
+        return MSVC::BitLength(x);
 #else
         return Common::BitLength(x);
 #endif
@@ -302,3 +291,5 @@ template <IntegerType T>
 }
 
 
+#undef BL_USE_LZCNT_BSR_INTRINSICS
+#undef BL_USE_CLZ_INTRINSICS

@@ -9,11 +9,11 @@
 
 #include <cstdint>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
 extern "C" {
-    unsigned short   __cdecl _byteswap_ushort(unsigned short);
-    unsigned long    __cdecl _byteswap_ulong(unsigned long);
-    unsigned __int64 __cdecl _byteswap_uint64(unsigned __int64);
+    unsigned short _byteswap_ushort(unsigned short);
+    unsigned long _byteswap_ulong(unsigned long);
+    unsigned __int64 _byteswap_uint64(unsigned __int64);
 }
 #endif
 
@@ -41,6 +41,7 @@ namespace Detail{
 #endif // __SIZEOF_INT128__
 
     } // namespace Common
+
 
 
     [[nodiscard]] constexpr uint16_t ByteSwap(uint16_t x) noexcept {

@@ -227,17 +227,24 @@ namespace Detail {
 #endif // CTZ_USE_TZCNT_BSF_INTRINSICS
 
 
+    namespace MSVC {
+        template <UnsignedIntegerType T>
+        [[nodiscard]] __forceinline int CountTrailingZeros(T x) noexcept {
+#ifdef CTZ_USE_TZCNT_BSF_INTRINSICS
+            if (!__builtin_is_constant_evaluated()) {
+                return X86_X64::CountTrailingZeros(x);
+            }
+#endif // CTZ_USE_TZCNT_BSF_INTRINSICS
+            return Common::CountTrailingZeros(x);
+        }
+    } // namespace MSVC
+
 
     [[nodiscard]] constexpr int CountTrailingZeros(uint32_t x) noexcept {
 #if __has_builtin(__builtin_ctz)
         return __builtin_ctz(x);
 #elif defined(_MSC_VER)
-#   ifdef CTZ_USE_TZCNT_BSF_INTRINSICS
-        if (!__builtin_is_constant_evaluated()) {
-            return X86_X64::CountTrailingZeros(x);
-        }
-#   endif // CTZ_USE_TZCNT_BSF_INTRINSICS
-        return Common::CountTrailingZeros(x);
+        return MSVC::CountTrailingZeros(x);
 #else
         return Common::CountTrailingZeros(x);
 #endif
@@ -247,12 +254,7 @@ namespace Detail {
 #if __has_builtin(__builtin_ctzll)
         return __builtin_ctzll(x);
 #elif defined(_MSC_VER)
-#   ifdef CTZ_USE_TZCNT_BSF_INTRINSICS
-        if (!__builtin_is_constant_evaluated()) {
-            return X86_X64::CountTrailingZeros(x);
-        }
-#   endif // CTZ_USE_TZCNT_BSF_INTRINSICS
-        return Common::CountTrailingZeros(x);
+        return MSVC::CountTrailingZeros(x);
 #else
         return Common::CountTrailingZeros(x);
 #endif
@@ -293,6 +295,8 @@ template <IntegerType T>
     }
 }
 
+
+#undef CTZ_USE_TZCNT_BSF_INTRINSICS
 
 
 #if defined(_MSC_VER) && !defined(__clang__)

@@ -206,6 +206,22 @@ namespace Detail {
 #endif // CLZ_USE_CLZ_INTRINSICS
 
 
+    namespace MSVC {
+        template <UnsignedIntegerType T>
+        [[nodiscard]] __forceinline int CountLeadingZeros(T x) noexcept {
+#if defined(CLZ_USE_LZCNT_BSR_INTRINSICS)
+            if (!__builtin_is_constant_evaluated()) {
+                return X86_X64::CountLeadingZeros(x);
+            }
+#elif defined(CLZ_USE_CLZ_INTRINSICS)
+            if (!__builtin_is_constant_evaluated()) {
+                return Arm_Arm64::CountLeadingZeros(x);
+            }
+#endif
+            return Common::CountLeadingZeros(x);
+        }
+    } // namespace MSVC
+
 
     [[nodiscard]] constexpr int CountLeadingZeros(uint16_t x) noexcept {
 #if __has_builtin(__builtin_clzs)
@@ -213,16 +229,7 @@ namespace Detail {
 #elif __has_builtin(__builtin_clz)
         return __builtin_clz(x) - 16;
 #elif defined(_MSC_VER)
-#   if defined(CLZ_USE_LZCNT_BSR_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return X86_X64::CountLeadingZeros(x);
-        }
-#   elif defined(CLZ_USE_CLZ_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm_Arm64::CountLeadingZeros(x);
-        }
-#   endif
-        return Common::CountLeadingZeros(x);
+        return MSVC::CountLeadingZeros(x);
 #else
         return Common::CountLeadingZeros(x);
 #endif
@@ -232,16 +239,7 @@ namespace Detail {
 #if __has_builtin(__builtin_clz)
         return __builtin_ctz(x);
 #elif defined(_MSC_VER)
-#   if defined(CLZ_USE_LZCNT_BSR_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return X86_X64::CountLeadingZeros(x);
-        }
-#   elif defined(CLZ_USE_CLZ_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm_Arm64::CountLeadingZeros(x);
-        }
-#   endif
-        return Common::CountLeadingZeros(x);
+        return MSVC::CountLeadingZeros(x);
 #else
         return Common::CountLeadingZeros(x);
 #endif
@@ -251,16 +249,7 @@ namespace Detail {
 #if __has_builtin(__builtin_clzll)
         return __builtin_clzll(x);
 #elif defined(_MSC_VER)
-#   if defined(CLZ_USE_LZCNT_BSR_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return X86_X64::CountLeadingZeros(x);
-        }
-#   elif defined(CLZ_USE_CLZ_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm_Arm64::CountLeadingZeros(x);
-        }
-#   endif
-        return Common::CountLeadingZeros(x);
+        return MSVC::CountLeadingZeros(x);
 #else
         return Common::CountLeadingZeros(x);
 #endif

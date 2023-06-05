@@ -123,23 +123,31 @@ namespace Detail {
 #endif // POPCNT_USE_NEON_INTRINSICS
 
 
+    namespace MSVC {
+        template <UnsignedIntegerType T>
+        [[nodiscard]] __forceinline int PopCount(T x) noexcept {
+#if defined(POPCNT_USE_POPCNT_INTRINSICS)
+            if (!__builtin_is_constant_evaluated()) {
+                if (__isa_available >= __ISA_AVAILABLE_SSE42) {
+                    return X86_X64::PopCount(x);
+                }
+            }
+#elif defined(POPCNT_USE_NEON_INTRINSICS)
+            if (!__builtin_is_constant_evaluated()) {
+                return Arm64::PopCount(x);
+            }
+#endif
+            return Common::PopCount(x);
+        }
+    } // namespace MSVC
+
+
 
     [[nodiscard]] constexpr int PopCount(uint16_t x) noexcept {
 #if __has_builtin(__builtin_popcount)
         return __builtin_popcount(x);
 #elif defined(_MSC_VER)
-#   if defined(POPCNT_USE_POPCNT_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            if (__isa_available >= __ISA_AVAILABLE_SSE42) {
-                return X86_X64::PopCount(x);
-            }
-        }
-#   else defined(POPCNT_USE_NEON_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm64::PopCount(x);
-        }
-#   endif
-        return Common::PopCount(x);
+        return MSVC::PopCount(x);
 #else
         return Common::PopCount(x);
 #endif
@@ -150,18 +158,7 @@ namespace Detail {
 #if __has_builtin(__builtin_popcount)
         return __builtin_popcount(x);
 #elif defined(_MSC_VER)
-#   if defined(POPCNT_USE_POPCNT_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            if (__isa_available >= __ISA_AVAILABLE_SSE42) {
-                return X86_X64::PopCount(x);
-            }
-        }
-#   else defined(POPCNT_USE_NEON_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm64::PopCount(x);
-        }
-#   endif
-        return Common::PopCount(x);
+        return MSVC::PopCount(x);
 #else
         return Common::PopCount(x);
 #endif
@@ -171,18 +168,7 @@ namespace Detail {
 #if __has_builtin(__builtin_popcountll)
         return __builtin_popcountll(x);
 #elif defined(_MSC_VER)
-#   if defined(POPCNT_USE_POPCNT_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            if (__isa_available >= __ISA_AVAILABLE_SSE42) {
-                return X86_X64::PopCount(x);
-            }
-        }
-#   else defined(POPCNT_USE_NEON_INTRINSICS)
-        if (!__builtin_is_constant_evaluated()) {
-            return Arm64::PopCount(x);
-        }
-#   endif
-        return Common::PopCount(x);
+        return MSVC::PopCount(x);
 #else
         return Common::PopCount(x);
 #endif
@@ -212,6 +198,7 @@ template <IntegerType T>
         return Detail::PopCount(static_cast<uint32_t>(x));
     } else if constexpr (sizeof(T) == 8) {
         return Detail::PopCount(static_cast<uint64_t>(x));
+
     } else {
         static_assert(sizeof(T) == 16, "Unexpected integer size");
 #ifdef __SIZEOF_INT128__
@@ -220,3 +207,6 @@ template <IntegerType T>
     }
 }
 
+
+
+#undef POPCNT_USE_POPCNT_INTRINSICS
