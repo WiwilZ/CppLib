@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../../../../Macro.h"
 #include "../../../Constant.h"
+#include "../../../../Macro.h"
 
 
 #if __has_builtin(__is_enum) || defined(_MSC_VER)
@@ -15,7 +15,7 @@ constexpr bool IsEnum_V = __is_enum(T);
 
 #else
 
-#include "../../../IsFundamental.h"
+#include "../IsFundamental.h"
 #include "IsArray.h"
 #include "IsFunction.h"
 #include "IsPointer.h"

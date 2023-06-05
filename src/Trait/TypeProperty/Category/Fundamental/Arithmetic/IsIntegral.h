@@ -4,14 +4,20 @@
 
 #pragma once
 
-#include "../../../../../Macro.h"
 #include "../../../../Constant.h"
+#include "../../../../../Macro.h"
 
 
 #if __has_builtin(__is_integral)
 
 template <typename T>
 constexpr bool IsIntegral_V = __is_integral(T);
+
+#elif defined(_MSC_VER)
+
+template <typename T>
+constexpr bool IsIntegral_V = IsAnyOf_V<RemoveCV_T<T>, bool, char, wchar_t, char8_t, char16_t, char32_t,
+        signed char, unsigned char, short, unsigned short, int, unsigned int, long, unsigned long, long long, unsigned long long>;
 
 #else
 

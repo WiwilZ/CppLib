@@ -6,10 +6,9 @@
 
 #include <climits>
 #include <cfloat>
-#include "../Concept/Arithmetic.h"
 
 
-template <FloatingPoint T>
+template <typename T>
 struct FloatingPointTrait;
 
 template <>

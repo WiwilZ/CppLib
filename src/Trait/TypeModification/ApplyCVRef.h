@@ -4,10 +4,10 @@
 
 #pragma once
 
+#include "Reference/ApplyReference.h"
 #include "CVSpecifier/ApplyCV.h"
 #include "RemoveCVRef.h"
 #include "Reference/RemoveReference.h"
-#include "Reference/ApplyReference.h"
 
 
 template <typename From, typename To>

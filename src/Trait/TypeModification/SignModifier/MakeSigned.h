@@ -4,13 +4,14 @@
 
 #pragma once
 
-#include <cstdint>
-#include "../TypeIdentity.h"
-#include "../CVSpecifier/RemoveCV.h"
-#include "../CVSpecifier/ApplyCV.h"
-#include "../../TypeProperty/Relationship/IsSame.h"
 #include "../../TypeProperty/Category/Fundamental/Arithmetic/IsIntegral.h"
 #include "../../TypeProperty/Category/Compound/IsEnum.h"
+#include "../../TypeProperty/Relationship/IsSame.h"
+#include "../CVSpecifier/ApplyCV.h"
+#include "../CVSpecifier/RemoveCV.h"
+#include "../TypeIdentity.h"
+
+#include <cstdint>
 
 
 namespace Detail {

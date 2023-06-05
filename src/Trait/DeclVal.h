@@ -5,14 +5,10 @@
 #pragma once
 
 #include "TypeModification/Reference/AddRValueReference.h"
+#include "../Trait/AlwaysFalse.h"
 
-
-namespace Detail::DeclVal {
-    template <typename>
-    constexpr bool AlwaysFalse = false;
-}
 
 template <typename T>
 AddRValueReference_T<T> DeclVal() noexcept {
-    static_assert(Detail::DeclVal::AlwaysFalse<T>, "DeclVal not allowed in an evaluated context");
+    static_assert(AlwaysFalse<T>, "DeclVal not allowed in an evaluated context");
 }

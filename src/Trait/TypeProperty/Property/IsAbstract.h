@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../../../Macro.h"
 #include "../../Constant.h"
+#include "../../../Macro.h"
 
 
 #if __has_builtin(__is_abstract) || defined(_MSC_VER)
@@ -15,7 +15,7 @@ constexpr bool IsAbstract_V = __is_abstract(T);
 
 #else
 
-#include "../Categories/IsClass.h"
+#include "../Category/Compound/IsClass.h"
 
 
 template <typename T>

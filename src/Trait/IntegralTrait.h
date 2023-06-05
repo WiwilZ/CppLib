@@ -5,15 +5,11 @@
 #pragma once
 
 #include <climits>
-#include "../Concept/Arithmetic.h"
+#include "../Concept/Integral.h"
 
 
 template <typename T>
-struct IntegralTrait;
-
-
-template <Integral T>
-struct IntegralTrait<T> {
+struct IntegralTrait {
     static constexpr bool IsSigned = static_cast<T>(-1) < static_cast<T>(0);
     static constexpr bool IsModulo = !IsSigned;
     static constexpr int NumBytes = sizeof(T);

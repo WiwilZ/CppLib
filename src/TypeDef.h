@@ -20,7 +20,7 @@ using uint64 = uint64_t;
 
 
 #ifdef __SIZEOF_INT128__
-    using int128 = __int128;
-    using uint128 = unsigned __int128;
+    using int128 = __int128_t;
+    using uint128 = __uint128_t;
 #endif
 

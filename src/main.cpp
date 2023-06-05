@@ -1,6 +1,12 @@
-#include <iostream>
-#include "Macro.h"
 #include "Bit.h"
+#include "Concept.h"
+#include "Trait.h"
+#include "Endian.h"
+#include "Utils.h"
+#include "Macro.h"
+
+#include <iostream>
+
 
 using namespace std;
 

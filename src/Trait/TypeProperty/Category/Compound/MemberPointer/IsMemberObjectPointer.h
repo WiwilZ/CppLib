@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../../../../../Macro.h"
 #include "../../../../Constant.h"
+#include "../../../../../Macro.h"
 
 
 #if __has_builtin(__is_member_object_pointer)

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Trait/AlwaysFalse.h"
+#include "Trait/AlwaysTrue.h"
 #include "Trait/Constant.h"
 #include "Trait/ConstantList.h"
 #include "Trait/DeclVal.h"
@@ -56,8 +58,6 @@
 #include "Trait/TypeProperty/Category/Compound/Pointer/IsObjectPointer.h"
 #include "Trait/TypeProperty/Category/Compound/Reference/IsLValueReference.h"
 #include "Trait/TypeProperty/Category/Compound/Reference/IsRValueReference.h"
-#include "Trait/TypeProperty/Category/Fundamental/Arithmetic/Integral/IsSignedIntegral.h"
-#include "Trait/TypeProperty/Category/Fundamental/Arithmetic/Integral/IsUnsignedIntegral.h"
 #include "Trait/TypeProperty/Category/Fundamental/Arithmetic/IsFloatingPoint.h"
 #include "Trait/TypeProperty/Category/Fundamental/Arithmetic/IsIntegral.h"
 #include "Trait/TypeProperty/Category/Fundamental/IsArithmetic.h"
@@ -119,4 +119,3 @@
 #include "Trait/TypeProperty/SupportedOperation/MoveConstructible/IsMoveConstructible.h"
 #include "Trait/TypeProperty/SupportedOperation/MoveConstructible/IsNothrowMoveConstructible.h"
 #include "Trait/TypeProperty/SupportedOperation/MoveConstructible/IsTriviallyMoveConstructible.h"
-
