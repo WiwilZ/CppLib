@@ -4,13 +4,17 @@
 
 #pragma once
 
+#include "../../../Concept/CompleteVoidOrUnboundedArray.h"
 #include "../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsStandardLayout_V = __is_standard_layout(T);
+namespace Trait {
+
+    template <Concept::CompleteVoidOrUnboundedArray T>
+    constexpr bool IsStandardLayout_V = __is_standard_layout(T);
 
 
-template <typename T>
-struct IsStandardLayout : BoolConstant<IsStandardLayout_V<T>> {};
+    template <Concept::CompleteVoidOrUnboundedArray T>
+    struct IsStandardLayout : BoolConstant<IsStandardLayout_V<T>> {};
 
+} // namespace Trait

@@ -7,9 +7,14 @@
 #include "../../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsUnion_V = __is_union(T);
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsUnion_V = __is_union(T);
 
 
-template <typename T>
-struct IsUnion : BoolConstant<IsUnion_V<T>> {};
+    template <typename T>
+    struct IsUnion : BoolConstant<IsUnion_V<T>> {};
+
+} // namespace Trait
+

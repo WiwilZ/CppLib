@@ -10,27 +10,42 @@
 
 #if __has_builtin(__is_pointer)
 
-template <typename T>
-constexpr bool IsPointer_V = __is_pointer(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsPointer_V = __is_pointer(T);
+
+} // namespace Trait
+
+#else // __has_builtin(__is_pointer)
 
 #include "../../../TypeModification/CVSpecifier/RemoveCV.h"
 
 
-namespace Detail {
-    template <typename T>
-    constexpr bool IsPointer_V = false;
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T>
+        constexpr bool IsPointer_V = false;
+
+        template <typename T>
+        constexpr bool IsPointer_V<T*> = true;
+
+    } // namespace Detail
 
     template <typename T>
-    constexpr bool IsPointer_V<T*> = true;
-}
+    constexpr bool IsPointer_V = Detail::IsPointer_V<RemoveCV_T<T>>;
 
-template <typename T>
-constexpr bool IsPointer_V = Detail::IsPointer_V<RemoveCV_T<T>>;
+} // namespace Trait
 
-#endif // __has_builtin(__is_pointer)
+#endif
 
 
-template <typename T>
-struct IsPointer : BoolConstant<IsPointer_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    struct IsPointer : BoolConstant<IsPointer_V<T>> {};
+
+} // namespace Trait
+

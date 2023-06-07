@@ -7,5 +7,9 @@
 #include "../Trait/TypeProperty/Category/Fundamental/Arithmetic/IsIntegral.h"
 
 
-template <typename T>
-concept Integral = IsIntegral_V<T>;
+namespace Concept {
+
+    template <typename T>
+    concept Integral = Trait::IsIntegral_V<T>;
+
+} // namespace Concept

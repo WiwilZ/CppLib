@@ -8,11 +8,16 @@
 #include "CVSpecifier/RemoveCV.h"
 
 
-template <typename T>
-struct RemoveCVRef {
-    using Type = RemoveCV_T<RemoveReference_T<T>>;
-};
+namespace Trait {
+
+    template <typename T>
+    struct RemoveCVRef {
+        using Type = RemoveCV_T<RemoveReference_T<T>>;
+    };
 
 
-template <typename T>
-using RemoveCVRef_T = typename RemoveCVRef<T>::Type;
+    template <typename T>
+    using RemoveCVRef_T = typename RemoveCVRef<T>::Type;
+
+} // namespace Trait
+

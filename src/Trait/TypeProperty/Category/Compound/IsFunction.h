@@ -10,20 +10,32 @@
 
 #if __has_builtin(__is_function)
 
-template <typename T>
-constexpr bool IsFunction_V = __is_function(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsFunction_V = __is_function(T);
+
+} // namespace Trait
+
+#else // __has_builtin(__is_function)
 
 #include "../../Property/IsConst.h"
 #include "IsReference.h"
 
 
-template <typename T>
-constexpr bool IsFunction_V = !IsConst_V<const T> && !IsReference_V<T>; // Only function types and reference types can't be const qualified
+namespace Trait {
 
-#endif // __has_builtin(__is_function)
+    template <typename T>
+    constexpr bool IsFunction_V = !IsConst_V<const T> && !IsReference_V<T>; // Only function types and reference types can't be const qualified
+
+} // namespace Trait
+
+#endif
 
 
-template <typename T>
-struct IsFunction : BoolConstant<IsFunction_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    struct IsFunction : BoolConstant<IsFunction_V<T>> {};
+
+} // namespace Trait

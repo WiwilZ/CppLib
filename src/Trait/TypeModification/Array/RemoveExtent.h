@@ -7,21 +7,26 @@
 #include <cstddef>
 
 
-template <typename T>
-struct RemoveExtent {
-    using Type = T;
-};
+namespace Trait {
 
-template <typename T, std::size_t N>
-struct RemoveExtent<T[N]> {
-    using Type = T;
-};
+    template <typename T>
+    struct RemoveExtent {
+        using Type = T;
+    };
 
-template <typename T>
-struct RemoveExtent<T[]> {
-    using Type = T;
-};
+    template <typename T, std::size_t N>
+    struct RemoveExtent<T[N]> {
+        using Type = T;
+    };
+
+    template <typename T>
+    struct RemoveExtent<T[]> {
+        using Type = T;
+    };
 
 
-template <typename T>
-using RemoveExtent_T = typename RemoveExtent<T>::Type;
+    template <typename T>
+    using RemoveExtent_T = typename RemoveExtent<T>::Type;
+
+} // namespace Trait
+

@@ -9,20 +9,33 @@
 
 #if __has_builtin(__is_nothrow_assignable) || defined(_MSC_VER)
 
-template <typename T, typename U>
-constexpr bool IsNothrowAssignable_V = __is_nothrow_assignable(T, U);
+namespace Trait {
 
-#else
+    template <typename T, typename U>
+    constexpr bool IsNothrowAssignable_V = __is_nothrow_assignable(T, U);
+
+} // namespace Trait
+
+#else // !(__has_builtin(__is_nothrow_assignable) || defined(_MSC_VER))
 
 #include "../../../DeclVal.h"
 
-template <typename T, typename U>
-constexpr bool IsNothrowAssignable_V = requires{
-    requires noexcept(::DeclVal<T>() = ::DeclVal<U>());
-};
+namespace Trait {
 
-#endif // __has_builtin(__is_nothrow_assignable) || defined(_MSC_VER)
+    template <typename T, typename U>
+    constexpr bool IsNothrowAssignable_V = requires{
+        requires noexcept(Trait::DeclVal<T>() = Trait::DeclVal<U>());
+    };
+
+} // namespace Trait
+
+#endif
 
 
-template <typename T, typename U>
-struct IsNothrowAssignable : BoolConstant<IsNothrowAssignable_V<T, U>> {};
+namespace Trait {
+
+    template <typename T, typename U>
+    struct IsNothrowAssignable : BoolConstant<IsNothrowAssignable_V<T, U>> {};
+
+} // namespace Trait
+

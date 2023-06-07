@@ -10,21 +10,32 @@
 
 #if __has_builtin(__is_void)
 
-template <typename T>
-constexpr bool IsVoid_V = __is_void(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsVoid_V = __is_void(T);
 
-#include "../../../TypeModification/CVSpecifier/RemoveCV.h"
+} // namespace Trait
+
+#else // !__has_builtin(__is_void)
+
 #include "../../Relationship/IsSame.h"
+#include "../../../TypeModification/CVSpecifier/RemoveCV.h"
 
 
-template <typename T>
-constexpr bool IsVoid_V = IsSame_V<RemoveCV_T<T>, void>;
+namespace Trait {
 
-#endif // __has_builtin(__is_void)
+    template <typename T>
+    constexpr bool IsVoid_V = IsSame_V<RemoveCV_T<T>, void>;
+
+} // namespace Trait
+
+#endif
 
 
-template <typename T>
-struct IsVoid : BoolConstant<IsVoid_V<T>> {};
+namespace Trait {
 
+    template <typename T>
+    struct IsVoid : BoolConstant<IsVoid_V<T>> {};
+
+} // namespace Trait

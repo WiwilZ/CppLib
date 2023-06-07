@@ -4,16 +4,22 @@
 
 #pragma once
 
-#include <cstddef>
 #include "../../../../Constant.h"
 
-
-template <typename T>
-constexpr bool IsBoundedArray_V = false;
-
-template <typename T, std::size_t N>
-constexpr bool IsBoundedArray_V<T[N]> = true;
+#include <cstddef>
 
 
-template <typename T>
-struct IsBoundedArray : BoolConstant<IsBoundedArray_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsBoundedArray_V = false;
+
+    template <typename T, std::size_t N>
+    constexpr bool IsBoundedArray_V<T[N]> = true;
+
+
+    template <typename T>
+    struct IsBoundedArray : BoolConstant<IsBoundedArray_V<T>> {};
+
+} // namespace Trait
+

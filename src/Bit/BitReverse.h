@@ -4,24 +4,31 @@
 
 #pragma once
 
-#include "../Concept/IntegerType.h"
+#include "../Concept/Integer.h"
+#include "../Concept/UnsignedInteger.h"
+#include "../Trait/TypeModification/SignModifier/MakeUnsigned.h"
 #include "../Macro.h"
 
 #include <cstdint>
 
 #if defined(_MSC_VER) && !defined(__clang__)
+
 extern "C" {
-    unsigned short   __cdecl _byteswap_ushort(unsigned short);
-    unsigned long    __cdecl _byteswap_ulong(unsigned long);
-    unsigned __int64 __cdecl _byteswap_uint64(unsigned __int64);
+    unsigned short _byteswap_ushort(unsigned short);
+    unsigned long _byteswap_ulong(unsigned long);
+    unsigned __int64 _byteswap_uint64(unsigned __int64);
 }
+
 #elif (__has_builtin(__builtin_bswap128) || __has_builtin(__builtin_bswap64)) && defined(__SSE2__) && defined(__SSSE3__)
+
 #include <tmmintrin.h>
+
 #endif
 
 
 
 namespace Detail {
+
     static constexpr uint8_t BitReverseTable[256]{
             0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
             0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8,
@@ -41,15 +48,9 @@ namespace Detail {
             0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
     };
 
-    [[nodiscard]] constexpr uint8_t BitReverse(uint8_t x) noexcept {
-        return BitReverseTable[x];
-    }
-
-    [[nodiscard]] constexpr uint16_t BitReverse(uint16_t x) noexcept {
-        return (BitReverseTable[x & 0xFF] << 8) | BitReverseTable[x >> 8];
-    }
 
     namespace BSwap {
+
         [[nodiscard]] constexpr uint32_t BitReverse(uint32_t x) noexcept {
             x = ((x & 0x0f0f0f0f) << 4) | ((x >> 4) & 0x0f0f0f0f);
             x = ((x & 0x33333333) << 2) | ((x >> 2) & 0x33333333);
@@ -65,6 +66,7 @@ namespace Detail {
         }
 
 #ifdef __SIZEOF_INT128__
+
         [[nodiscard]] constexpr __uint128_t BitReverse(__uint128_t x) noexcept {
             constexpr __uint128_t c0 = (__uint128_t{0x0f0f0f0f0f0f0f0f} << 64) | 0x0f0f0f0f0f0f0f0f;
             constexpr __uint128_t c1 = (__uint128_t{0x3333333333333333} << 64) | 0x3333333333333333;
@@ -74,9 +76,11 @@ namespace Detail {
             x = ((x & c2) << 1) | ((x >> 1) & c2);
             return x;
         }
-#endif // __SIZEOF_INT128__
+
+#endif
 
     } // namespace BSwap
+
 
     namespace Common {
         [[nodiscard]] constexpr uint32_t BitReverse(uint32_t x) noexcept {
@@ -96,25 +100,36 @@ namespace Detail {
         }
 
 #ifdef __SIZEOF_INT128__
+
         [[nodiscard]] constexpr __uint128_t BitReverse(__uint128_t x) noexcept {
             return (static_cast<__uint128_t>(BitReverse(static_cast<uint64_t>(x))) << 64) | BitReverse(static_cast<uint64_t>(x >> 64));
         }
-#endif // __SIZEOF_INT128__
+
+#endif
 
     } // namespace Common
 
+
+
+    [[nodiscard]] constexpr uint8_t BitReverse(uint8_t x) noexcept {
+        return BitReverseTable[x];
+    }
+
+    [[nodiscard]] constexpr uint16_t BitReverse(uint16_t x) noexcept {
+        return (BitReverseTable[x & 0xFF] << 8) | BitReverseTable[x >> 8];
+    }
 
     [[nodiscard]] constexpr uint32_t BitReverse(uint32_t x) noexcept {
 #if __has_builtin(__builtin_bitreverse32)
         return __builtin_bitreverse32(x);
 #elif __has_builtin(__builtin_bswap32)
         return BSwap::BitReverse(__builtin_bswap32(x));
-#elif defined(_MSC_VER)
+#else // !__has_builtin(__builtin_bitreverse32) && !__has_builtin(__builtin_bswap32)
+#   if defined(_MSC_VER)
         if (!__builtin_is_constant_evaluated()) {
             return BSwap::BitReverse(static_cast<uint32_t>(_byteswap_ulong(x)));
         }
-        return Common::BitReverse(x);
-#else
+#   endif
         return Common::BitReverse(x);
 #endif
     }
@@ -124,12 +139,12 @@ namespace Detail {
         return __builtin_bitreverse64(x);
 #elif __has_builtin(__builtin_bswap64)
         return BSwap::BitReverse(__builtin_bswap64(x));
-#elif defined(_MSC_VER)
+#else // !__has_builtin(__builtin_bitreverse64) && !__has_builtin(__builtin_bswap64)
+#   if defined(_MSC_VER)
         if (!__builtin_is_constant_evaluated()) {
             return BSwap::BitReverse(_byteswap_uint64(x));
         }
-        return Common::BitReverse(x);
-#else
+#   endif
         return Common::BitReverse(x);
 #endif
     }
@@ -142,12 +157,13 @@ namespace Detail {
 #   elif (__has_builtin(__builtin_bswap128) || __has_builtin(__builtin_bswap64))
 #       if __has_builtin(__builtin_bswap128)
         x = __builtin_bswap128(x);
-#       else
+#       else // !__has_builtin(__builtin_bswap128)
         x = (static_cast<__uint128_t>(__builtin_bswap64(x)) << 64) | __builtin_bswap64(x >> 64);
 #       endif // __has_builtin(__builtin_bswap128)
+
 #       if defined(__SSE2__) && defined(__SSSE3__)
         if (!__builtin_is_constant_evaluated()) {
-            __m128i r = _mm_set_epi64x(x >> 64, x);
+            __m128i r = *reinterpret_cast<__m128i*>(&x);
             static const __m128i c0 = _mm_set1_epi8(0x0f);
             static const __m128i c1 = _mm_setr_epi8(0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0);
             static const __m128i c2 = _mm_setr_epi8(0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e, 0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f);
@@ -157,36 +173,25 @@ namespace Detail {
             _mm_store_si128(reinterpret_cast<__m128i*>(&x), r);
             return x;
         }
-#       else
-        return BSwap::BitReverse(x);
 #       endif // defined(__SSE2__) && defined(__SSSE3__)
-        return Common::BitReverse(x);
-#   else
+
+        return BSwap::BitReverse(x);
+#   else // !__has_builtin(__builtin_bitreverse64) && !(__has_builtin(__builtin_bswap128) || __has_builtin(__builtin_bswap64))
         return Common::BitReverse(x);
 #   endif
     }
 
-#endif // __SIZEOF_INT128__
+#endif
 
 } // namespace Detail
 
 
 
-template <IntegerType T>
-[[nodiscard]] constexpr T BitReverse(T x) noexcept {
-    if constexpr (sizeof(T) == 1) {
-        return Detail::BitReverse(static_cast<uint8_t>(x));
-    } else if constexpr (sizeof(T) == 2) {
-        return Detail::BitReverse(static_cast<uint16_t>(x));
-    } else if constexpr (sizeof(T) == 4) {
-        return Detail::BitReverse(static_cast<uint32_t>(x));
-    } else if constexpr (sizeof(T) == 8) {
-        return Detail::BitReverse(static_cast<uint64_t>(x));
-    } else {
-        static_assert(sizeof(T) == 16, "Unexpected integer size");
-#ifdef __SIZEOF_INT128__
-        return Detail::BitReverse(static_cast<__uint128_t>(x));
-#endif // __SIZEOF_INT128__
-    }
-}
+namespace Bit {
 
+    template <Concept::Integer T>
+    [[nodiscard]] constexpr T BitReverse(T x) noexcept {
+        return Detail::BitReverse(static_cast<Trait::MakeUnsigned_T<T>>(x));
+    }
+
+} // namespace Bit

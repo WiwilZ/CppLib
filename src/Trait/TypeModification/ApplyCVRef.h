@@ -10,11 +10,16 @@
 #include "Reference/RemoveReference.h"
 
 
-template <typename From, typename To>
-using ApplyCVRef_T = ApplyReference_T<From, ApplyCV_T<From, RemoveCVRef_T<To>>>;
+namespace Trait {
+
+    template <typename From, typename To>
+    using ApplyCVRef_T = ApplyReference_T<From, ApplyCV_T<From, RemoveCVRef_T<To>>>;
 
 
-template <typename From, typename To>
-struct ApplyCVRef {
-    using Type = ApplyCVRef_T<From, To>;
-};
+    template <typename From, typename To>
+    struct ApplyCVRef {
+        using Type = ApplyCVRef_T<From, To>;
+    };
+
+} // namespace Trait
+

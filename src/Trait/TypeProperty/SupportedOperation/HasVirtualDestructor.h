@@ -7,10 +7,13 @@
 #include "../../Constant.h"
 
 
-template <typename T>
-constexpr bool HasVirtualDestructor_V = __has_virtual_destructor(T);
+namespace Trait {
+
+    template <typename T>
+    constexpr bool HasVirtualDestructor_V = __has_virtual_destructor(T);
 
 
-template <typename T>
-struct HasVirtualDestructor : BoolConstant<HasVirtualDestructor_V<T>> {};
+    template <typename T>
+    struct HasVirtualDestructor : BoolConstant<HasVirtualDestructor_V<T>> {};
 
+} // namespace Trait

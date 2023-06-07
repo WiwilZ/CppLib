@@ -4,22 +4,41 @@
 
 #pragma once
 
-
 #include "Macro.h"
 
 
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(_MSC_VER) && !defined(__clang__)
+
+namespace Detail {
+
+#pragma optimize("", off)
+
+    inline void DoNotOptimizeImpl(const void*) noexcept {}
+
+#pragma optimize("", on)
+
+}
+
+FORCEINLINE void DoNotOptimize(const auto& x) noexcept {
+    Detail::DoNotOptimizeImpl(&x);
+}
+
+#else // !(defined(_MSC_VER) && !defined(__clang__))
+
 #include "Trait/TypeProperty/Property/IsTriviallyCopyable.h"
 #include "Trait/TypeProperty/Category/Compound/IsPointer.h"
 
 
 namespace Detail {
+
     template <typename T>
-    concept InRegister = IsTriviallyCopyable_V<T> && sizeof(T) <= sizeof(T*) && !IsPointer_V<T>;
+    concept InRegister = Trait::IsTriviallyCopyable_V<T> && sizeof(T) <= sizeof(T*) && !Trait::IsPointer_V<T>;
 
     template <typename T>
     concept InMemory = !InRegister<T>;
-}
+
+} // namespace Detail
+
 
 FORCEINLINE void DoNotOptimize(const Detail::InRegister auto& x) noexcept {
     asm volatile("" : : "r"(x));
@@ -27,18 +46,6 @@ FORCEINLINE void DoNotOptimize(const Detail::InRegister auto& x) noexcept {
 
 FORCEINLINE void DoNotOptimize(const Detail::InMemory auto& x) noexcept {
     asm volatile("" : : "m"(x) : "memory");
-}
-
-#else
-
-namespace internal {
-#pragma optimize("", off)
-    inline void DoNotOptimizeImpl(const void*) noexcept {}
-#pragma optimize("", on)
-}
-
-FORCEINLINE void DoNotOptimize(const auto& x) noexcept {
-    internal::DoNotOptimizeImpl(&x);
 }
 
 #endif

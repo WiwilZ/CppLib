@@ -5,15 +5,17 @@
 #pragma once
 
 #include "BitLength.h"
-#include "../Concept/UnsignedIntegerType.h"
-
-#include <cstdint>
+#include "../Concept/Integer.h"
 
 
-template <UnsignedIntegerType T>
-[[nodiscard]] constexpr T BitFloor(T x) noexcept {
-    if (x == 0) {
-        return 0;
+namespace Bit {
+
+    template <Concept::Integer T>
+    [[nodiscard]] constexpr T BitFloor(T x) noexcept {
+        if (x <= 0) {
+            return 0;
+        }
+        return static_cast<T>(1) << (BitLength(x) - 1);
     }
-    return static_cast<T>(1) << (BitLength(x) - 1);
-}
+
+} // namespace Bit

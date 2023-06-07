@@ -4,12 +4,14 @@
 
 #pragma once
 
-#include "../Concept/IntegerType.h"
-
-#include <cstdint>
+#include "../Concept/Integer.h"
 
 
-template <IntegerType T>
-[[nodiscard]] constexpr bool IsPowerOfTwo(T x) noexcept {
-    return x > 0 && (x & (x - 1)) == 0;
-}
+namespace Bit {
+
+    template <Concept::Integer T>
+    [[nodiscard]] constexpr bool IsPowerOfTwo(T x) noexcept {
+        return x > 0 && (x & (x - 1)) == 0;
+    }
+
+} // namespace Bit

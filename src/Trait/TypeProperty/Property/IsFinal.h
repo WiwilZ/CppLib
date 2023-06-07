@@ -7,10 +7,13 @@
 #include "../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsFinal_V = __is_final(T);
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsFinal_V = __is_final(T);
 
 
-template <typename T>
-struct IsFinal : BoolConstant<IsFinal_V<T>> {};
+    template <typename T>
+    struct IsFinal : BoolConstant<IsFinal_V<T>> {};
 
+} // namespace Trait

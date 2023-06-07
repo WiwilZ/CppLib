@@ -7,9 +7,14 @@
 #include "../Constant.h"
 
 
-template <typename... Ts>
-constexpr bool Conjunction_V = (... && Ts::Value);
+namespace Trait {
+
+    template <typename... Ts>
+    constexpr bool Conjunction_V = (... && Ts::Value);
 
 
-template <typename... Ts>
-struct Conjunction : BoolConstant<Conjunction_V<Ts...>> {};
+    template <typename... Ts>
+    struct Conjunction : BoolConstant<Conjunction_V<Ts...>> {};
+
+} // namespace Trait
+

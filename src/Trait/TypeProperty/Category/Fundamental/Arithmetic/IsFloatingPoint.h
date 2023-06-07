@@ -10,20 +10,33 @@
 
 #if __has_builtin(__is_floating_point)
 
-template <typename T>
-constexpr bool IsFloatingPoint_V = __is_floating_point(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsFloatingPoint_V = __is_floating_point(T);
 
-#include "../../../../TypeModification/CVSpecifier/RemoveCV.h"
+} // namespace Trait
+
+#else // !__has_builtin(__is_floating_point)
+
 #include "../../../Relationship/IsAnyOf.h"
+#include "../../../../TypeModification/CVSpecifier/RemoveCV.h"
 
 
-template <typename T>
-constexpr bool IsFloatingPoint_V = IsAnyOf_V<RemoveCV_T<T>, float, double, long double>;
+namespace Trait {
 
-#endif // __has_builtin(__is_floating_point)
+    template <typename T>
+    constexpr bool IsFloatingPoint_V = IsAnyOf_V<RemoveCV_T<T>, float, double, long double>;
+
+} // namespace Trait
+
+#endif
 
 
-template <typename T>
-struct IsFloatingPoint : BoolConstant<IsFloatingPoint_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    struct IsFloatingPoint : BoolConstant<IsFloatingPoint_V<T>> {};
+
+} // namespace Trait
+

@@ -7,30 +7,36 @@
 #include "../Void_T.h"
 
 
-namespace Detail {
-    template <typename T>
-    struct MakeRValueReferenceImpl {
-        using Type = T&&;
-    };
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T>
+        struct MakeRValueReferenceImpl {
+            using Type = T&&;
+        };
+
+        template <typename T>
+        struct MakeRValueReferenceImpl<T&> {
+            using Type = T&&;
+        };
+
+        template <typename T, typename = void>
+        struct MakeRValueReference {
+            using Type = T;
+        };
+
+        template <typename T>
+        struct MakeRValueReference<T, Void_T<T&&>> : MakeRValueReferenceImpl<T> {};
+
+    } // namespace Detail
+
 
     template <typename T>
-    struct MakeRValueReferenceImpl<T&> {
-        using Type = T&&;
-    };
+    struct MakeRValueReference : Detail::MakeRValueReference<T> {};
 
-    template <typename T, typename = void>
-    struct MakeRValueReference {
-        using Type = T;
-    };
 
     template <typename T>
-    struct MakeRValueReference<T, Void_T<T&&>> : MakeRValueReferenceImpl<T> {};
-}
+    using MakeRValueReference_T = typename MakeRValueReference<T>::Type;
 
-
-template <typename T>
-struct MakeRValueReference : Detail::MakeRValueReference<T> {};
-
-
-template <typename T>
-using MakeRValueReference_T = typename MakeRValueReference<T>::Type;
+} // namespace Trait

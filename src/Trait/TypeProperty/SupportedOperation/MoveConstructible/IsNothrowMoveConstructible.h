@@ -9,10 +9,13 @@
 #include "../../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsNothrowMoveConstructible_V = IsNothrowConstructible_V<T, AddRValueReference_T<T>>;
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsNothrowMoveConstructible_V = IsNothrowConstructible_V<T, AddRValueReference_T<T>>;
 
 
-template <typename T>
-struct IsNothrowMoveConstructible : BoolConstant<IsNothrowMoveConstructible_V<T>> {};
+    template <typename T>
+    struct IsNothrowMoveConstructible : BoolConstant<IsNothrowMoveConstructible_V<T>> {};
 
+} // namespace Trait

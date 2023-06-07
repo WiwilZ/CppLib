@@ -4,15 +4,21 @@
 
 #pragma once
 
-#include <cstddef>
-#include "../../../TypeModification/CVSpecifier/RemoveCV.h"
 #include "../../Relationship/IsSame.h"
+#include "../../../TypeModification/CVSpecifier/RemoveCV.h"
 #include "../../../Constant.h"
 
-
-template <typename T>
-constexpr bool IsNullPointer_V = IsSame_V<RemoveCV_T<T>, std::nullptr_t>;
+#include <cstddef>
 
 
-template <typename T>
-struct IsNullPointer : BoolConstant<IsNullPointer_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsNullPointer_V = IsSame_V<RemoveCV_T<T>, std::nullptr_t>;
+
+
+    template <typename T>
+    struct IsNullPointer : BoolConstant<IsNullPointer_V<T>> {};
+
+} // namespace Trait
+

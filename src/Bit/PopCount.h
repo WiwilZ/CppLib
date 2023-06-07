@@ -4,16 +4,22 @@
 
 #pragma once
 
-#include "../Concept/IntegerType.h"
-#include "../Concept/UnsignedIntegerType.h"
+#include "../Concept/Integer.h"
+#include "../Concept/UnsignedInteger.h"
+#include "../Trait/IntegralTrait.h"
+#include "../Trait/TypeModification/SignModifier/MakeUnsigned.h"
 #include "../Macro.h"
 
 #include <cstdint>
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#   if (defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)) && !defined(_M_CEE_PURE) && !defined(__CUDACC__) && !defined(__INTEL_COMPILER) && defined(__AVX__)
+
+#   if (defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)) && !defined(_M_CEE_PURE) && !defined(__CUDACC__) && !defined(__INTEL_COMPILER)
+
 #define POPCNT_USE_POPCNT_INTRINSICS
+
 #include <isa_availability.h>
+
 extern "C" {
     extern int __isa_available;
 
@@ -21,15 +27,20 @@ extern "C" {
     unsigned int __popcnt(unsigned int);
     unsigned __int64 __popcnt64(unsigned __int64);
 }
+
 #   elif (defined(_M_ARM64) || defined(_M_ARM64EC)) && !defined(_M_CEE_PURE) && !defined(__CUDACC__) && !defined(__INTEL_COMPILER)
+
 #define POPCNT_USE_NEON_INTRINSICS
 #include <arm64_neon.h>
+
 #   endif
+
 #endif
 
 
 
 namespace Detail {
+
     static constexpr uint8_t PopCountTable[256]{
             0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
             1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
@@ -49,12 +60,14 @@ namespace Detail {
             4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
     };
 
+    
     [[nodiscard]] constexpr int PopCount(uint8_t x) noexcept {
         return PopCountTable[x];
     }
 
 
     namespace Common {
+
         [[nodiscard]] constexpr int PopCount(uint16_t x) noexcept {
             return (PopCountTable[x & 0xFF] << 8) + PopCountTable[x >> 8];
         }
@@ -76,6 +89,7 @@ namespace Detail {
         }
 
 #ifdef __SIZEOF_INT128__
+
         [[nodiscard]] constexpr int PopCount(__uint128_t x) noexcept {
             constexpr __uint128_t c0 = (__uint128_t{0x5555555555555555} << 64) | 0x5555555555555555;
             constexpr __uint128_t c1 = (__uint128_t{0x3333333333333333} << 64) | 0x3333333333333333;
@@ -87,58 +101,83 @@ namespace Detail {
             x = (x * c3) >> 120;
             return static_cast<int>(x);
         }
-#endif // __SIZEOF_INT128__
+
+#endif
 
     } // namespace Common
 
 
 #ifdef POPCNT_USE_POPCNT_INTRINSICS
-    namespace X86_X64 {
-        template <UnsignedIntegerType T>
+
+    namespace PopCnt {
+
+        template <Concept::UnsignedInteger T>
         [[nodiscard]] __forceinline int PopCount(T x) noexcept {
             if constexpr (sizeof(T) <= 2) {
                 return __popcnt16(x);
             } else if constexpr (sizeof(T) == 4) {
                 return __popcnt(x);
             } else {
-                static_assert(sizeof(T) == 8, "Unexpected integer size");
 #   ifdef _M_IX86
                 return static_cast<int>(__popcnt(x >> 32) + __popcnt(static_cast<unint32_t>(x)));
-#   else
+#   else // !defined(_M_IX86)
                 return static_cast<int>(__popcnt64(x));
 #   endif // _M_IX86
             }
         }
+
+    } // namespace PopCnt
+
+
+    namespace X86_X64 {
+
+        template <Concept::UnsignedInteger T>
+        [[nodiscard]] __forceinline int PopCount(T x) noexcept {
+#   ifndef __AVX2__
+            if (__isa_available < __ISA_AVAILABLE_AVX2) {
+                return return Common::PopCount(x);
+            }
+#   endif // __AVX2__
+            return PopCnt::PopCount(x);
+        }
+
     } // namespace X86_X64
+
 #endif // POPCNT_USE_POPCNT_INTRINSICS
 
 
 #ifdef POPCNT_USE_NEON_INTRINSICS
+
     namespace Arm64 {
+
         [[nodiscard]] __forceinline int PopCount(uint64_t x) noexcept {
             const __n64 v = neon_cnt(__uint64ToN64_v(x));
             return neon_addv8(v).n8_i8[0];
         }
+
     } // namespace Arm64
+
 #endif // POPCNT_USE_NEON_INTRINSICS
 
 
     namespace MSVC {
-        template <UnsignedIntegerType T>
-        [[nodiscard]] __forceinline int PopCount(T x) noexcept {
-#if defined(POPCNT_USE_POPCNT_INTRINSICS)
+
+        template <Concept::UnsignedInteger T>
+        [[nodiscard]] constexpr int PopCount(T x) noexcept {
+#ifdef _MSC_VER
+#   if defined(POPCNT_USE_POPCNT_INTRINSICS)
             if (!__builtin_is_constant_evaluated()) {
-                if (__isa_available >= __ISA_AVAILABLE_SSE42) {
-                    return X86_X64::PopCount(x);
-                }
+                return X86_X64::PopCount(x);
             }
-#elif defined(POPCNT_USE_NEON_INTRINSICS)
+#   elif defined(POPCNT_USE_NEON_INTRINSICS)
             if (!__builtin_is_constant_evaluated()) {
                 return Arm64::PopCount(x);
             }
+#   endif
 #endif
             return Common::PopCount(x);
         }
+
     } // namespace MSVC
 
 
@@ -146,10 +185,8 @@ namespace Detail {
     [[nodiscard]] constexpr int PopCount(uint16_t x) noexcept {
 #if __has_builtin(__builtin_popcount)
         return __builtin_popcount(x);
-#elif defined(_MSC_VER)
+#else // !__has_builtin(__builtin_popcount)
         return MSVC::PopCount(x);
-#else
-        return Common::PopCount(x);
 #endif
     }
 
@@ -157,55 +194,44 @@ namespace Detail {
     [[nodiscard]] constexpr int PopCount(uint32_t x) noexcept {
 #if __has_builtin(__builtin_popcount)
         return __builtin_popcount(x);
-#elif defined(_MSC_VER)
+#else // !__has_builtin(__builtin_popcount)
         return MSVC::PopCount(x);
-#else
-        return Common::PopCount(x);
 #endif
     }
 
     [[nodiscard]] constexpr int PopCount(uint64_t x) noexcept {
 #if __has_builtin(__builtin_popcountll)
         return __builtin_popcountll(x);
-#elif defined(_MSC_VER)
+#else // !__has_builtin(__builtin_popcountll)
         return MSVC::PopCount(x);
-#else
-        return Common::PopCount(x);
 #endif
     }
 
 #ifdef __SIZEOF_INT128__
+
     [[nodiscard]] constexpr int PopCount(__uint128_t x) noexcept {
 #   if __has_builtin(__builtin_popcountll)
         return __builtin_popcountll(x >> 64) + __builtin_popcountll(x);
-#   else
+#   else // !__has_builtin(__builtin_popcountll)
         return Common::PopCount(x);
 #   endif
     }
-#endif // __SIZEOF_INT128__
+
+#endif
 
 } // namespace Detail
 
 
 
-template <IntegerType T>
-[[nodiscard]] constexpr int PopCount(T x) noexcept {
-    if constexpr (sizeof(T) == 1) {
-        return Detail::PopCount(static_cast<uint8_t>(x));
-    } else if constexpr (sizeof(T) == 2) {
-        return Detail::PopCount(static_cast<uint16_t>(x));
-    } else if constexpr (sizeof(T) == 4) {
-        return Detail::PopCount(static_cast<uint32_t>(x));
-    } else if constexpr (sizeof(T) == 8) {
-        return Detail::PopCount(static_cast<uint64_t>(x));
 
-    } else {
-        static_assert(sizeof(T) == 16, "Unexpected integer size");
-#ifdef __SIZEOF_INT128__
-        return Detail::PopCount(static_cast<__uint128_t>(x));
-#endif // __SIZEOF_INT128__
+namespace Bit {
+
+    template <Concept::Integer T>
+    [[nodiscard]] constexpr int PopCount(T x) noexcept {
+        return Detail::PopCount(static_cast<Trait::MakeUnsigned_T<T>>(x));
     }
-}
+
+} // namespace Bit
 
 
 

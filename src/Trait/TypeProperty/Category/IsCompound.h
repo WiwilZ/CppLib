@@ -10,19 +10,29 @@
 
 #if __has_builtin(__is_compound)
 
-template <typename T>
-constexpr bool IsCompound_V = __is_compound(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsCompound_V = __is_compound(T);
+
+} // namespace Trait
+
+#else // !__has_builtin(__is_compound)
 
 #include "IsFundamental.h"
 
 
-template <typename T>
-constexpr bool IsCompound_V = !IsFundamental_V<T>;
+namespace Trait {
 
-#endif // __has_builtin(__is_compound)
+    template <typename T>
+    constexpr bool IsCompound_V = !IsFundamental_V<T>;
+
+} // namespace Trait
+
+#endif
 
 
-template <typename T>
-struct IsCompound : BoolConstant<IsCompound_V<T>> {};
+namespace Trait {
+    template <typename T>
+    struct IsCompound : BoolConstant<IsCompound_V<T>> {};
+}

@@ -7,22 +7,29 @@
 #include "../Void_T.h"
 
 
-namespace Detail {
-    template <typename T, typename = void>
-    struct AddLValueReference {
-        using Type = T;
-    };
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T, typename = void>
+        struct AddLValueReference {
+            using Type = T;
+        };
+
+        template <typename T>
+        struct AddLValueReference<T, Void_T<T&>> {
+            using Type = T&;
+        };
+
+    } // namespace Detail
+
 
     template <typename T>
-    struct AddLValueReference<T, Void_T<T&>> {
-        using Type = T&;
-    };
-}
+    struct AddLValueReference : Detail::AddLValueReference<T> {};
 
 
-template <typename T>
-struct AddLValueReference : Detail::AddLValueReference<T> {};
+    template <typename T>
+    using AddLValueReference_T = typename AddLValueReference<T>::Type;
 
+} // namespace Trait
 
-template <typename T>
-using AddLValueReference_T = typename AddLValueReference<T>::Type;

@@ -7,6 +7,9 @@
 #include "../Trait/TypeProperty/Category/Fundamental/Arithmetic/IsFloatingPoint.h"
 
 
-template <typename T>
-concept FloatingPoint = IsFloatingPoint_V<T>;
+namespace Concept {
 
+    template <typename T>
+    concept FloatingPoint = Trait::IsFloatingPoint_V<T>;
+
+} // namespace Concept

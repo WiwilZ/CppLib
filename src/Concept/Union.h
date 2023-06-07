@@ -7,5 +7,10 @@
 #include "../Trait/TypeProperty/Category/Compound/IsUnion.h"
 
 
-template <typename T>
-concept UnionType = IsUnion_V<T>;
+namespace Concept {
+
+    template <typename T>
+    concept Union = Trait::IsUnion_V<T>;
+
+} // namespace Concept
+

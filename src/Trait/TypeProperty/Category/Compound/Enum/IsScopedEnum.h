@@ -4,17 +4,24 @@
 
 #pragma once
 
+#include "../IsEnum.h"
 #include "../../../../TypeModification/CVSpecifier/RemoveCV.h"
 #include "../../../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsScopedEnum_V = requires{
-        requires __is_enum(T);
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsScopedEnum_V = requires {
+        requires IsEnum_V<T>;
         sizeof(T);
         requires !requires(void f(int), T v) { f(v); };
-};
+    };
 
 
-template <typename T>
-struct IsScopedEnum : BoolConstant<IsScopedEnum_V<T>> {};
+    template <typename T>
+    struct IsScopedEnum : BoolConstant<IsScopedEnum_V<T>> {};
+
+} // namespace Trait
+
+

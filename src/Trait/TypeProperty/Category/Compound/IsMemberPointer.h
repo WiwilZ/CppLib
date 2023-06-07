@@ -10,27 +10,43 @@
 
 #if __has_builtin(__is_member_pointer)
 
-template <typename T>
-constexpr bool IsMemberPointer_V = __is_member_pointer(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsMemberPointer_V = __is_member_pointer(T);
+
+} // namespace Trait
+
+#else // __has_builtin(__is_member_pointer)
 
 #include "../../../TypeModification/CVSpecifier/RemoveCV.h"
 
 
-namespace Detail {
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T>
+        constexpr bool IsMemberPointer_V = false;
+
+        template <typename T, typename U>
+        constexpr bool IsMemberPointer_V<T U::*> = true;
+
+    } // namespace Detail
+
+
     template <typename T>
-    constexpr bool IsMemberPointer_V = false;
+    constexpr bool IsMemberPointer_V = Detail::IsMemberPointer_V<RemoveCV_T<T>>;
 
-    template <typename T, typename U>
-    constexpr bool IsMemberPointer_V<T U::*> = true;
-}
+} // namespace Trait
 
-template <typename T>
-constexpr bool IsMemberPointer_V = Detail::IsMemberPointer_V<RemoveCV_T<T>>;
-
-#endif // __has_builtin(__is_member_pointer)
+#endif
 
 
-template <typename T>
-struct IsMemberPointer : BoolConstant<IsMemberPointer_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    struct IsMemberPointer : BoolConstant<IsMemberPointer_V<T>> {};
+
+} // namespace Trait
+

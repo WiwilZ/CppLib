@@ -7,5 +7,10 @@
 #include "../Trait/TypeProperty/Category/Compound/IsClass.h"
 
 
-template <typename T>
-concept ClassType = IsClass_V<T>;
+namespace Concept {
+
+    template <typename T>
+    concept Class = Trait::IsClass_V<T>;
+
+} // namespace Concept
+

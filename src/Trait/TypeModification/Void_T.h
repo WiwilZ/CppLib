@@ -5,5 +5,10 @@
 #pragma once
 
 
-template <typename...>
-using Void_T = void;
+namespace Trait {
+
+    template <typename...>
+    using Void_T = void;
+
+} // namespace Trait
+
