@@ -10,19 +10,31 @@
 
 #if __has_builtin(__is_volatile)
 
-template <typename T>
-constexpr bool IsVolatile_V = __is_volatile(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsVolatile_V = __is_volatile(T);
 
-template <typename T>
-constexpr bool IsVolatile_V = false;
+} // namespace Trait
 
-template <typename T>
-constexpr bool IsVolatile_V<volatile T> = true;
+#else // !__has_builtin(__is_volatile)
 
-#endif // __has_builtin(__is_volatile)
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsVolatile_V = false;
+
+    template <typename T>
+    constexpr bool IsVolatile_V<volatile T> = true;
+
+} // namespace Trait
+
+#endif
 
 
-template <typename T>
-struct IsVolatile : BoolConstant<IsVolatile_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    struct IsVolatile : BoolConstant<IsVolatile_V<T>> {};
+
+} // namespace Trait

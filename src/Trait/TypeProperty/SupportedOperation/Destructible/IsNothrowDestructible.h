@@ -9,28 +9,41 @@
 
 #if __has_builtin(__is_nothrow_destructible) || defined(_MSC_VER)
 
-template <typename T>
-constexpr bool IsNothrowDestructible_V = __is_nothrow_destructible(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsNothrowDestructible_V = __is_nothrow_destructible(T);
+
+} // namespace Trait
+
+#else // !(__has_builtin(__is_nothrow_destructible) || defined(_MSC_VER))
 
 #include "IsDestructible.h"
-#include "../../../DeclVal.h"
 #include "../../../TypeModification/Array/RemoveAllExtents.h"
+#include "../../../DeclVal.h"
 
 
-namespace Detail {
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T>
+        constexpr bool IsNothrowDestructible_V = noexcept(Trait::DeclVal<T&>().~T());
+
+    } // namespace Detail
+
+
     template <typename T>
-    constexpr bool IsNothrowDestructible_V = noexcept(::DeclVal<T&>().~T());
-}
+    constexpr bool IsNothrowDestructible_V = IsDestructible_V<T> && Detail::IsNothrowDestructible_V<RemoveAllExtents_T<T>>;
 
-template <typename T>
-constexpr bool IsNothrowDestructible_V = IsDestructible_V<T> && Detail::IsNothrowDestructible_V<RemoveAllExtents_T<T>>;
+} // namespace Trait
 
-
-#endif // __has_builtin(__is_nothrow_destructible) || defined(_MSC_VER)
+#endif
 
 
-template <typename T>
-struct IsNothrowDestructible : BoolConstant<IsNothrowDestructible_V<T>> {};
+namespace Trait {
 
+    template <typename T>
+    struct IsNothrowDestructible : BoolConstant<IsNothrowDestructible_V<T>> {};
+
+} // namespace Trait

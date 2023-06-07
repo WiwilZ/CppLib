@@ -5,5 +5,9 @@
 #pragma once
 
 
-template <typename>
-constexpr bool AlwaysFalse = false;
+namespace Trait {
+
+    template <typename>
+    constexpr bool AlwaysFalse = false;
+
+} // namespace Trait

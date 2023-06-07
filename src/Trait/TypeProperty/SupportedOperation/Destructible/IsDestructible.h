@@ -9,30 +9,46 @@
 
 #if __has_builtin(__is_destructible) || defined(_MSC_VER)
 
-template <typename T>
-constexpr bool IsDestructible_V = __is_destructible(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsDestructible_V = __is_destructible(T);
 
-#include "../../../DeclVal.h"
+} // namespace Trait
+
+#else // !( __has_builtin(__is_destructible) || defined(_MSC_VER))
+
 #include "../../../TypeModification/Array/RemoveAllExtents.h"
 #include "../../../TypeProperty/Category/IsObject.h"
 #include "../../../TypeProperty/Category/Compound/IsReference.h"
 #include "../../../TypeProperty/Category/Fundamental/IsVoid.h"
 #include "../../../TypeProperty/Category/Compound/IsFunction.h"
 #include "../../../TypeProperty/Category/Compound/Array/IsUnboundedArray.h"
+#include "../../../DeclVal.h"
 
 
-namespace Detail {
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T>
+        constexpr bool IsDestructible_V = requires{ Trait::DeclVal<T&>().~T(); };
+
+    } // namespace Detail
+
+
     template <typename T>
-    constexpr bool IsDestructible_V = requires{ ::DeclVal<T&>().~T(); };
-}
+    constexpr bool IsDestructible_V = IsReference_V<T> || !(IsVoid_V<T> || IsFunction_V<T> || IsUnboundedArray_V<T>) || Detail::IsDestructible_V<RemoveAllExtents_T<T>>;
 
-template <typename T>
-constexpr bool IsDestructible_V = IsReference_V<T> || !(IsVoid_V<T> || IsFunction_V<T> || IsUnboundedArray_V<T>) || Detail::IsDestructible_V<RemoveAllExtents_T<T>>;
+} // namespace Trait
 
-#endif // __has_builtin(__is_destructible) || defined(_MSC_VER)
+#endif
 
 
-template <typename T>
-struct IsDestructible : BoolConstant<IsDestructible_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    struct IsDestructible : BoolConstant<IsDestructible_V<T>> {};
+
+} // namespace Trait
+

@@ -9,17 +9,25 @@
 #include "../../../../Constant.h"
 
 
-namespace Detail {
-    template <typename T>
-    constexpr bool IsFunctionPointer_V = false;
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T>
+        constexpr bool IsFunctionPointer_V = false;
+
+        template <typename T>
+        constexpr bool IsFunctionPointer_V<T*> = IsFunction_V<T>;
+
+    } // namespace Detail
+
 
     template <typename T>
-    constexpr bool IsFunctionPointer_V<T*> = IsFunction_V<T>;
-}
-
-template <typename T>
-constexpr bool IsFunctionPointer_V = Detail::IsFunctionPointer_V<RemoveCV_T<T>>;
+    constexpr bool IsFunctionPointer_V = Detail::IsFunctionPointer_V<RemoveCV_T<T>>;
 
 
-template <typename T>
-struct IsFunctionPointer : BoolConstant<IsFunctionPointer_V<T>> {};
+    template <typename T>
+    struct IsFunctionPointer : BoolConstant<IsFunctionPointer_V<T>> {};
+
+} // namespace Trait
+

@@ -12,13 +12,16 @@
 #include "Pointer/AddPointer.h"
 
 
-template <typename T>
-struct Decay : Conditional<
-        IsArray_V<T>,
-        AddPointer_T<RemoveExtent_T<T>>,
-        Conditional_T<IsFunction_V<T>, AddPointer_T<T>, RemoveCV_T<T>>
-> {};
+namespace Trait {
+
+    template <typename T>
+    struct Decay : Conditional<IsArray_V<T>,
+            AddPointer_T<RemoveExtent_T<T>>,
+            Conditional_T<IsFunction_V<T>, AddPointer_T<T>, RemoveCV_T<T>>> {};
 
 
-template<typename T>
-using Decay_T = typename Decay<T>::Type;
+    template <typename T>
+    using Decay_T = typename Decay<T>::Type;
+
+} // namespace Trait
+

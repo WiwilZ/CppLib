@@ -4,16 +4,21 @@
 
 #pragma once
 
+#include "../../../Concept/CompleteVoidOrUnboundedArray.h"
 #include "../../Constant.h"
 
 
 #if __has_builtin(__reference_converts_from_temporary)
 
-template <typename T1, typename T2>
-constexpr bool ReferenceConvertsFromTemporary_V = __reference_converts_from_temporary(T1, T2);
+namespace Trait {
+
+    template <Concept::CompleteVoidOrUnboundedArray T1, Concept::CompleteVoidOrUnboundedArray T2>
+    constexpr bool ReferenceConvertsFromTemporary_V = __reference_converts_from_temporary(T1, T2);
 
 
-template <typename T1, typename T2>
-struct ReferenceConvertsFromTemporary : BoolConstant<ReferenceConvertsFromTemporary_V<T1, T2>> {};
+    template <Concept::CompleteVoidOrUnboundedArray T1, Concept::CompleteVoidOrUnboundedArray T2>
+    struct ReferenceConvertsFromTemporary : BoolConstant<ReferenceConvertsFromTemporary_V<T1, T2>> {};
 
-#endif // __has_builtin(__reference_converts_from_temporary)
+}
+
+#endif

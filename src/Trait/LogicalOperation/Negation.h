@@ -7,9 +7,14 @@
 #include "../Constant.h"
 
 
-template <typename T>
-constexpr bool Negation_V = !T::Value;
+namespace Trait {
+
+    template <typename T>
+    constexpr bool Negation_V = !T::Value;
 
 
-template <typename T>
-struct Negation : BoolConstant<!T::Value> {};
+    template <typename T>
+    struct Negation : BoolConstant<!T::Value> {};
+
+} // namespace Trait
+

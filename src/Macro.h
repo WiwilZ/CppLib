@@ -6,20 +6,20 @@
 
 
 #if defined(__clang__)
-    #define CLANG_COMPILER
+#define CLANG_COMPILER
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && !defined(__NVCOMPILER)
-    #define GCC_COMPILER
+#define GCC_COMPILER
 #endif
 
 #ifdef _MSC_VER
-    #define MSVC_COMPILER
+#define MSVC_COMPILER
 #endif
 
 
 #ifndef __has_builtin
-    #define __has_builtin(x) 0
+#define __has_builtin(x) 0
 #endif
 
 

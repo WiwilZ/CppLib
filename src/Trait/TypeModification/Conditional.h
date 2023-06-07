@@ -5,16 +5,21 @@
 #pragma once
 
 
-template <bool Condition, typename If, typename Else>
-struct Conditional {
-    using Type = If;
-};
+namespace Trait {
 
-template <typename If, typename Else>
-struct Conditional<false, If, Else> {
-    using Type = Else;
-};
+    template <bool Condition, typename If, typename Else>
+    struct Conditional {
+        using Type = If;
+    };
+
+    template <typename If, typename Else>
+    struct Conditional<false, If, Else> {
+        using Type = Else;
+    };
 
 
-template <bool Condition, typename If, typename Else>
-using Conditional_T = typename Conditional<Condition, If, Else>::Type;
+    template <bool Condition, typename If, typename Else>
+    using Conditional_T = typename Conditional<Condition, If, Else>::Type;
+
+} // namespace Trait
+

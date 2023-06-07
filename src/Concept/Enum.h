@@ -7,6 +7,10 @@
 #include "../Trait/TypeProperty/Category/Compound/IsEnum.h"
 
 
-template <typename T>
-concept EnumType = IsEnum_V<T>;
+namespace Concept {
+
+    template <typename T>
+    concept Enum = Trait::IsEnum_V<T>;
+
+} // namespace Concept
 

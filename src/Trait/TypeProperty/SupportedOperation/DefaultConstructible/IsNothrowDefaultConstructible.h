@@ -8,10 +8,13 @@
 #include "../../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsNothrowDefaultConstructible_V = IsNothrowConstructible_V<T>;
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsNothrowDefaultConstructible_V = IsNothrowConstructible_V<T>;
 
 
-template <typename T>
-struct IsNothrowDefaultConstructible : BoolConstant<IsNothrowDefaultConstructible_V<T>> {};
+    template <typename T>
+    struct IsNothrowDefaultConstructible : BoolConstant<IsNothrowDefaultConstructible_V<T>> {};
 
+} // namespace Trait

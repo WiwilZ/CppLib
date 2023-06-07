@@ -5,31 +5,36 @@
 #pragma once
 
 
-template <typename T>
-struct RemovePointer {
-    using Type = T;
-};
+namespace Trait {
 
-template <typename T>
-struct RemovePointer<T*> {
-    using Type = T;
-};
+    template <typename T>
+    struct RemovePointer {
+        using Type = T;
+    };
 
-template <typename T>
-struct RemovePointer<const T*> {
-    using Type = T;
-};
+    template <typename T>
+    struct RemovePointer<T *> {
+        using Type = T;
+    };
 
-template <typename T>
-struct RemovePointer<volatile T*> {
-    using Type = T;
-};
+    template <typename T>
+    struct RemovePointer<const T*> {
+        using Type = T;
+    };
 
-template <typename T>
-struct RemovePointer<const volatile T*> {
-    using Type = T;
-};
+    template <typename T>
+    struct RemovePointer<volatile T*> {
+        using Type = T;
+    };
+
+    template <typename T>
+    struct RemovePointer<const volatile T*> {
+        using Type = T;
+    };
 
 
-template <typename T>
-using RemovePointer_T = typename RemovePointer<T>::Type;
+    template <typename T>
+    using RemovePointer_T = typename RemovePointer<T>::Type;
+
+} // namespace Trait
+

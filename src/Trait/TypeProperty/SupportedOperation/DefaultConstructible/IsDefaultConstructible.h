@@ -4,14 +4,18 @@
 
 #pragma once
 
+
 #include "../Constructible/IsConstructible.h"
 #include "../../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsDefaultConstructible_V = IsConstructible_V<T>;
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsDefaultConstructible_V = IsConstructible_V<T>;
 
 
-template <typename T>
-struct IsDefaultConstructible : BoolConstant<IsDefaultConstructible_V<T>> {};
+    template <typename T>
+    struct IsDefaultConstructible : BoolConstant<IsDefaultConstructible_V<T>> {};
 
+} // namespace Trait

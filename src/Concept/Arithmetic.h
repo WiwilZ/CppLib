@@ -7,5 +7,9 @@
 #include "../Trait/TypeProperty/Category/Fundamental/IsArithmetic.h"
 
 
-template <typename T>
-concept Arithmetic = IsArithmetic_V<T>;
+namespace Concept {
+
+    template <typename T>
+    concept Arithmetic =  Trait::IsArithmetic_V<T>;
+
+}  // namespace Concept

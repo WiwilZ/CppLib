@@ -5,20 +5,22 @@
 #pragma once
 
 #include "BitLength.h"
+#include "../Concept/Integer.h"
 #include "../Trait/IntegralTrait.h"
-#include "../Concept/UnsignedIntegerType.h"
-
-#include <cstdint>
 
 
-template <UnsignedIntegerType T>
-[[nodiscard]] constexpr T NextPowerOf2(T x) noexcept {
-    if (x == 0) {
-        return 1;
+namespace Bit {
+
+    template <Concept::Integer T>
+    [[nodiscard]] constexpr T NextPowerOf2(T x) noexcept {
+        if (x == 0) {
+            return 1;
+        }
+        const int shift = BitLength(x);
+        if (shift >= Trait::IntegralTrait<T>::NumDigits) {
+            return 0;
+        }
+        return static_cast<T>(1) << shift;
     }
-    const int shift = BitLength(x);
-    if (shift >= IntegralTrait<T>::NumBits) {
-        return 0;
-    }
-    return static_cast<T>(1) << shift;
-}
+
+} // namespace Bit

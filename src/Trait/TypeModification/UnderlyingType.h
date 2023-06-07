@@ -4,14 +4,19 @@
 
 #pragma once
 
-#include "../../Concept/EnumType.h"
+#include "../../Concept/Enum.h"
 
 
-template <EnumType T>
-struct UnderlyingType {
-    using Type = __underlying_type(T);
-};
+namespace Trait {
+
+    template <Concept::Enum T>
+    struct UnderlyingType {
+        using Type = __underlying_type(T);
+    };
 
 
-template <EnumType T>
-using UnderlyingType_T = typename UnderlyingType<T>::Type;
+    template <Concept::Enum T>
+    using UnderlyingType_T = typename UnderlyingType<T>::Type;
+
+} // namespace Trait
+

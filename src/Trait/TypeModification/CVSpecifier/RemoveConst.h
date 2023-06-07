@@ -5,16 +5,20 @@
 #pragma once
 
 
-template <typename T>
-struct RemoveConst {
-    using Type = T;
-};
+namespace Trait {
 
-template <typename T>
-struct RemoveConst<const T>  {
-    using Type = T;
-};
+    template <typename T>
+    struct RemoveConst {
+        using Type = T;
+    };
+
+    template <typename T>
+    struct RemoveConst<const T> {
+        using Type = T;
+    };
 
 
-template <typename T>
-using RemoveConst_T = typename RemoveConst<T>::Type;
+    template <typename T>
+    using RemoveConst_T = typename RemoveConst<T>::Type;
+
+} // namespace Trait

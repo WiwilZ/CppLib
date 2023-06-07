@@ -7,12 +7,17 @@
 #include "../../../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsUnboundedArray_V = false;
+namespace Trait {
 
-template <typename T>
-constexpr bool IsUnboundedArray_V<T[]> = true;
+    template <typename T>
+    constexpr bool IsUnboundedArray_V = false;
+
+    template <typename T>
+    constexpr bool IsUnboundedArray_V<T[]> = true;
 
 
-template <typename T>
-struct IsUnboundedArray : BoolConstant<IsUnboundedArray_V<T>> {};
+    template <typename T>
+    struct IsUnboundedArray : BoolConstant<IsUnboundedArray_V<T>> {};
+
+} // namespace Trait
+

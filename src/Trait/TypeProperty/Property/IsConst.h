@@ -10,19 +10,32 @@
 
 #if __has_builtin(__is_const)
 
-template <typename T>
-constexpr bool IsConst_V = __is_const(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsConst_V = __is_const(T);
 
-template <typename T>
-constexpr bool IsConst_V = false;
+} // namespace Trait
 
-template <typename T>
-constexpr bool IsConst_V<const T> = true;
+#else // !__has_builtin(__is_const)
+
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsConst_V = false;
+
+    template <typename T>
+    constexpr bool IsConst_V<const T> = true;
+
+} // namespace Trait
 
 #endif // __has_builtin(__is_const)
 
 
-template <typename T>
-struct IsConst : BoolConstant<IsConst_V<T>> {};
+namespace Trait {
+
+    template <typename T>
+    struct IsConst : BoolConstant<IsConst_V<T>> {};
+
+} // namespace Trait
+

@@ -7,23 +7,29 @@
 #include <cstddef>
 
 
-template <typename T, T Val>
-struct Constant {
-    using Type = Constant;
-    using ValueType = T;
-    static constexpr ValueType Value = Val;
-    constexpr operator ValueType() const noexcept { return Val; }
-    constexpr ValueType operator()() const noexcept { return Val; }
-};
+namespace Trait {
+
+    template <typename T, T Val>
+    struct Constant {
+        using Type = Constant;
+        using ValueType = T;
+        static constexpr ValueType Value = Val;
+
+        constexpr operator ValueType() const noexcept { return Val; }
+
+        constexpr ValueType operator()() const noexcept { return Val; }
+    };
 
 
-template <std::size_t Val>
-using SizeConstant = Constant<std::size_t, Val>;
+    template <std::size_t Val>
+    using SizeConstant = Constant<std::size_t, Val>;
 
-template <bool Val>
-using BoolConstant = Constant<bool, Val>;
+    template <bool Val>
+    using BoolConstant = Constant<bool, Val>;
 
 
-using TrueType = BoolConstant<true>;
-using FalseType = BoolConstant<false>;
+    using TrueType = BoolConstant<true>;
+    using FalseType = BoolConstant<false>;
+
+} // namespace Trait
 

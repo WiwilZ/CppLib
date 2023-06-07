@@ -5,7 +5,11 @@
 #pragma once
 
 
-template <typename T>
-struct TypeIdentity {
-    using Type = T;
-};
+namespace Trait {
+
+    template <typename T>
+    struct TypeIdentity {
+        using Type = T;
+    };
+
+} // namespace Trait

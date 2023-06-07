@@ -9,40 +9,46 @@
 #include "../Reference/ApplyReference.h"
 
 
-namespace Detail {
-    template <typename T>
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T>
+        struct ApplyCV {
+            template <typename U>
+            using Apply = ApplyReference_T<U, RemoveCVRef_T<U>>;
+        };
+
+        template <typename T>
+        struct ApplyCV<const T> {
+            template <typename U>
+            using Apply = ApplyReference_T<U, const RemoveCVRef_T<U>>;
+        };
+
+        template <typename T>
+        struct ApplyCV<volatile T> {
+            template <typename U>
+            using Apply = ApplyReference_T<U, volatile RemoveCVRef_T<U>>;
+        };
+
+        template <typename T>
+        struct ApplyCV<const volatile T> {
+            template <typename U>
+            using Apply = ApplyReference_T<U, const volatile RemoveCVRef_T<U>>;
+        };
+
+    }  // namespace Detail
+
+
+    template <typename From, typename To>
+    using ApplyCV_T = typename Detail::ApplyCV<RemoveReference_T<From>>::template Apply<To>;
+
+
+    template <typename From, typename To>
     struct ApplyCV {
-        template <typename U>
-        using Apply = ApplyReference_T<U, RemoveCVRef_T<U>>;
+        using Type = ApplyCV_T<From, To>;
     };
 
-    template <typename T>
-    struct ApplyCV<const T>  {
-        template <typename U>
-        using Apply = ApplyReference_T<U, const RemoveCVRef_T<U>>;
-    };
-
-    template <typename T>
-    struct ApplyCV<volatile T>  {
-        template <typename U>
-        using Apply = ApplyReference_T<U, volatile RemoveCVRef_T<U>>;
-    };
-
-    template <typename T>
-    struct ApplyCV<const volatile T>  {
-        template <typename U>
-        using Apply = ApplyReference_T<U, const volatile RemoveCVRef_T<U>>;
-    };
-}
-
-
-template <typename From, typename To>
-using ApplyCV_T = typename Detail::ApplyCV<RemoveReference_T<From>>::template Apply<To>;
-
-
-template <typename From, typename To>
-struct ApplyCV {
-    using Type = ApplyCV_T<From, To>;
-};
+} // namespace Trait
 
 

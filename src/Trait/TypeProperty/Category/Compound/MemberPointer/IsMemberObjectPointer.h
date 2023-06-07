@@ -10,28 +10,44 @@
 
 #if __has_builtin(__is_member_object_pointer)
 
-template <typename T>
-constexpr bool IsMemberObjectPointer_V = __is_member_object_pointer(T);
+namespace Trait {
 
-#else
-
-#include "../../../../TypeModification/CVSpecifier/RemoveCV.h"
-#include "../IsFunction.h"
-
-
-namespace Detail {
     template <typename T>
-    constexpr bool IsMemberObjectPointer_V = false;
+    constexpr bool IsMemberObjectPointer_V = __is_member_object_pointer(T);
 
-    template <typename T, typename U>
-    constexpr bool IsMemberObjectPointer_V<T U::*> = !IsFunction_V<T>;
-}
+} // namespace Trait
 
-template <typename T>
-constexpr bool IsMemberObjectPointer_V = Detail::IsMemberObjectPointer_V<RemoveCV_T<T>>;
+#else // !__has_builtin(__is_member_object_pointer)
 
-#endif // __has_builtin(__is_member_object_pointer)
+#include "../IsFunction.h"
+#include "../../../../TypeModification/CVSpecifier/RemoveCV.h"
 
 
-template <typename T>
-struct IsMemberObjectPointer : BoolConstant<IsMemberObjectPointer_V<T>> {};
+namespace Trait {
+
+    namespace Detail {
+
+        template <typename T>
+        constexpr bool IsMemberObjectPointer_V = false;
+
+        template <typename T, typename U>
+        constexpr bool IsMemberObjectPointer_V<T U::*> = !IsFunction_V<T>;
+
+    } // namespace Detail
+
+
+    template <typename T>
+    constexpr bool IsMemberObjectPointer_V = Detail::IsMemberObjectPointer_V<RemoveCV_T<T>>;
+
+} // namespace Trait
+
+#endif
+
+
+namespace Trait {
+
+    template <typename T>
+    struct IsMemberObjectPointer : BoolConstant<IsMemberObjectPointer_V<T>> {};
+
+} // namespace Trait
+

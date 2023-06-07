@@ -7,10 +7,13 @@
 #include "../../Constant.h"
 
 
-template <typename T>
-constexpr bool HasUniqueObjectRepresentations_V = __has_unique_object_representations(T);
+namespace Trait {
+
+    template <typename T>
+    constexpr bool HasUniqueObjectRepresentations_V = __has_unique_object_representations(T);
 
 
-template <typename T>
-struct HasUniqueObjectRepresentations : BoolConstant<HasUniqueObjectRepresentations_V<T>> {};
+    template <typename T>
+    struct HasUniqueObjectRepresentations : BoolConstant<HasUniqueObjectRepresentations_V<T>> {};
 
+} // namespace Trait

@@ -11,9 +11,14 @@
 #include "../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsCompleteVoidOrUnboundedArray_V = requires { sizeof(T); } || IsVoid_V<T> || IsReference_V<T> || IsFunction_V<T> || IsUnboundedArray_V<T>;
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsCompleteVoidOrUnboundedArray_V = requires { sizeof(T); } || IsVoid_V<T> || IsReference_V<T> || IsFunction_V<T> || IsUnboundedArray_V<T>;
 
 
-template <typename T>
-struct IsCompleteVoidOrUnboundedArray : BoolConstant<IsCompleteVoidOrUnboundedArray_V<T>> {};
+    template <typename T>
+    struct IsCompleteVoidOrUnboundedArray : BoolConstant<IsCompleteVoidOrUnboundedArray_V<T>> {};
+
+} // namespace Trait
+

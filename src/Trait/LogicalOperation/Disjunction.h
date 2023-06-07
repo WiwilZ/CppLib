@@ -7,9 +7,14 @@
 #include "../Constant.h"
 
 
-template <typename... Ts>
-constexpr bool Disjunction_V = (... || Ts::Value);
+namespace Trait {
+
+    template <typename... Ts>
+    constexpr bool Disjunction_V = (... || Ts::Value);
 
 
-template <typename... Ts>
-struct Disjunction : BoolConstant<Disjunction_V<Ts...>> {};
+    template <typename... Ts>
+    struct Disjunction : BoolConstant<Disjunction_V<Ts...>> {};
+
+} // namespace Trait
+

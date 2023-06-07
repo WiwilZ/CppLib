@@ -5,12 +5,28 @@
 #pragma once
 
 #include "CountLeadingZeros.h"
-#include "../Concept/IntegerType.h"
-
-#include <cstdint>
+#include "../Concept/Integer.h"
 
 
-template <IntegerType T>
-[[nodiscard]] constexpr int CountLeadingOnes(T x) noexcept {
-    return CountLeadingZeros(~x);
-}
+#if defined(_MSC_VER) && !defined(__clang__)
+#   pragma warning(push)
+#   pragma warning(disable : 4146)
+#endif
+
+
+
+namespace Bit {
+
+    template <Concept::Integer T>
+    [[nodiscard]] constexpr int CountLeadingOnes(T x) noexcept {
+        return CountLeadingZeros(~x);
+    }
+
+} // namespace Bit
+
+
+
+#if defined(_MSC_VER) && !defined(__clang__)
+#   pragma warning(push)
+#   pragma warning(disable : 4146)
+#endif

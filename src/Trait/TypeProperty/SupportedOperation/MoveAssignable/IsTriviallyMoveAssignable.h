@@ -10,10 +10,13 @@
 #include "../../../Constant.h"
 
 
-template <typename T>
-constexpr bool IsTriviallyMoveAssignable_V = IsTriviallyAssignable_V<AddLValueReference_T<T>, AddRValueReference_T<T>>;
+namespace Trait {
+
+    template <typename T>
+    constexpr bool IsTriviallyMoveAssignable_V = IsTriviallyAssignable_V<AddLValueReference_T<T>, AddRValueReference_T<T>>;
 
 
-template <typename T>
-struct IsTriviallyMoveAssignable : BoolConstant<IsTriviallyMoveAssignable_V<T>> {};
+    template <typename T>
+    struct IsTriviallyMoveAssignable : BoolConstant<IsTriviallyMoveAssignable_V<T>> {};
 
+} // namespace Trait

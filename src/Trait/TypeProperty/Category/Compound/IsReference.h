@@ -10,23 +10,34 @@
 
 #if __has_builtin(__is_reference)
 
-template <typename T>
-constexpr bool IsReference_V = __is_reference(T);
+namespace Trait {
 
-#else
+    template <typename T>
+    constexpr bool IsReference_V = __is_reference(T);
 
-template <typename T>
-constexpr bool IsReference_V = false;
+} // namespace Trait
 
-template <typename T>
-constexpr bool IsReference_V<T&> = true;
+#else // __has_builtin(__is_reference)
 
-template <typename T>
-constexpr bool IsReference_V<T&&> = true;
+namespace Trait {
 
-#endif // __has_builtin(__is_reference)
+    template <typename T>
+    constexpr bool IsReference_V = false;
+
+    template <typename T>
+    constexpr bool IsReference_V<T&> = true;
+
+    template <typename T>
+    constexpr bool IsReference_V<T&&> = true;
+
+} // namespace Trait
+
+#endif
 
 
-template <typename T>
-struct IsReference : BoolConstant<IsReference_V<T>> {};
+namespace Trait {
 
+    template <typename T>
+    struct IsReference : BoolConstant<IsReference_V<T>> {};
+
+}  // namespace Trait
