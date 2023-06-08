@@ -8,7 +8,6 @@
 #include "../Concept/UnsignedInteger.h"
 #include "../Trait/IntegralTrait.h"
 #include "../Trait/TypeModification/SignModifier/MakeUnsigned.h"
-#include "../Macro.h"
 
 #include <cstdint>
 
@@ -41,32 +40,32 @@ extern "C" {
 
 namespace Detail {
 
-    static constexpr uint8_t TrailingZerosTable[256]{
-            8, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-            4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
-    };
-
-
-    [[nodiscard]] constexpr int CountTrailingZeros(uint8_t x) noexcept {
-        return TrailingZerosTable[x];
-    }
-
-
     namespace Common {
+
+        static constexpr uint8_t TrailingZerosTable[256]{
+                8, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+                4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
+        };
+
+
+        [[nodiscard]] constexpr int CountTrailingZeros(uint8_t x) noexcept {
+            return TrailingZerosTable[x];
+        }
+
 
         /*  Build de Bruijn Sequence
          *  def deBruijn(n):
@@ -180,66 +179,70 @@ namespace Detail {
     } // namespace Common
 
 
+
 #ifdef CTZ_USE_TZCNT_BSF_INTRINSICS
 
-    namespace TZCNT {
+    namespace X86_X64 {
 
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] __forceinline int CountTrailingZeros(T x) noexcept {
-            if (x == 0) {
+        namespace TZCNT {
+
+            template <Concept::UnsignedInteger T>
+            [[nodiscard]] __forceinline int CountTrailingZeros(T x) noexcept {
+                if constexpr (sizeof(T) <= 4) {
+                    if (x == 0) {
+                        return Trait::IntegralTrait<T>::NumBits;
+                    }
+                    return _tzcnt_u32(x);
+                } else {
+                    static_assert(sizeof(T) == 8, "Unexpected integer size");
+#   ifdef _M_IX86
+                    const uint32_t low = x;
+                    if (low != 0) {
+                        return _tzcnt_u32(low);
+                    }
+                    const uint32_t high = x >> 32;
+                    return _tzcnt_u32(high) + 32;
+#   else  // !defined(_M_IX86)
+                    return _tzcnt_u64(x);
+#   endif
+                }
+            }
+
+        } // namespace TZCNT
+
+
+        namespace BSF {
+
+            template <Concept::UnsignedInteger T>
+            [[nodiscard]] __forceinline int CountTrailingZeros(T x) noexcept {
+                unsigned long result;
+                if constexpr (sizeof(T) <= 4) {
+                    if (_BitScanForward(&result, x)) {
+                        return result;
+                    }
+                } else {
+                    static_assert(sizeof(T) == 8, "Unexpected integer size");
+#   ifdef _M_IX86
+                    const uint32_t low = x;
+                    if (_BitScanForward(&result, low)) {
+                        return result;
+                    }
+                    const uint32_t high = x >> 32;
+                    if (_BitScanForward(&result, high)) {
+                        return result + 32;
+                    }
+#   else // !defined(_M_IX86)
+                    if (_BitScanForward64(&result, x)) {
+                        return result;
+                    }
+#   endif
+                }
                 return Trait::IntegralTrait<T>::NumBits;
             }
-            if constexpr (sizeof(T) <= 4) {
-                return _tzcnt_u32(x);
-            } else {
-#   ifdef _M_IX86
-                const uint32_t low = x;
-                if (low != 0) {
-                    return _tzcnt_u32(low);
-                }
-                const uint32_t high = x >> 32;
-                return _tzcnt_u32(high) + 32;
-#   else  // !defined(_M_IX86)
-                return _tzcnt_u64(x);
-#   endif
-            }
-        }
 
-    } // namespace TZCNT
+        } // namespace BSF
 
 
-    namespace BSF {
-
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] __forceinline int CountTrailingZeros(T x) noexcept {
-            unsigned long result;
-            if constexpr (sizeof(T) <= 4) {
-                if (_BitScanForward(&result, x)) {
-                    return result;
-                }
-            } else {
-#   ifdef _M_IX86
-                const uint32_t low = x;
-                if (_BitScanForward(&result, low)) {
-                    return result;
-                }
-                const uint32_t high = x >> 32;
-                if (_BitScanForward(&result, high)) {
-                    return result + 32;
-                }
-#   else // !defined(_M_IX86)
-                if (_BitScanForward64(&result, x)) {
-                    return result;
-                }
-#   endif
-            }
-            return Trait::IntegralTrait<T>::NumBits;
-        }
-
-    } // namespace BSF
-
-
-    namespace X86_X64 {
         template <Concept::UnsignedInteger T>
         [[nodiscard]] __forceinline int CountTrailingZeros(T x) noexcept {
 #   ifndef __AVX2__
@@ -253,67 +256,6 @@ namespace Detail {
 
 #endif // CTZ_USE_TZCNT_BSF_INTRINSICS
 
-
-    namespace MSVC {
-
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] constexpr int CountTrailingZeros(T x) noexcept {
-#if defined(_MSC_VER) && defined(CTZ_USE_TZCNT_BSF_INTRINSICS)
-            if (!__builtin_is_constant_evaluated()) {
-                return X86_X64::CountTrailingZeros(x);
-            }
-#endif
-            return Common::CountTrailingZeros(x);
-        }
-
-    } // namespace MSVC
-
-
-
-    [[nodiscard]] constexpr int CountTrailingZeros(uint16_t x) noexcept {
-        if (x == 0) {
-            return 16;
-        }
-#if __has_builtin(__builtin_ctz)
-        return __builtin_ctz(x);
-#else // __has_builtin(__builtin_ctz)
-        return MSVC::CountTrailingZeros(x);
-#endif
-    }
-
-    [[nodiscard]] constexpr int CountTrailingZeros(uint32_t x) noexcept {
-#if __has_builtin(__builtin_ctz)
-        return __builtin_ctz(x);
-#else // __has_builtin(__builtin_ctz)
-        return MSVC::CountTrailingZeros(x);
-#endif
-    }
-
-    [[nodiscard]] constexpr int CountTrailingZeros(uint64_t x) noexcept {
-#if __has_builtin(__builtin_ctzll)
-        return __builtin_ctzll(x);
-#else // __has_builtin(__builtin_ctzll)
-        return MSVC::CountTrailingZeros(x);
-#endif
-    }
-
-#ifdef __SIZEOF_INT128__
-
-    [[nodiscard]] constexpr int CountTrailingZeros(__uint128_t x) noexcept {
-#if __has_builtin(__builtin_ctzll)
-        const uint64_t low = x;
-        if (low != 0) {
-            return __builtin_ctzll(low);
-        }
-        const uint64_t high = x >> 64;
-        return __builtin_ctzll(high) + 64;
-#else // __has_builtin(__builtin_ctzll)
-        return Common::CountTrailingZeros(x);
-#endif
-    }
-
-#endif
-
 } // namespace Detail
 
 
@@ -322,7 +264,32 @@ namespace Bit {
 
     template <Concept::Integer T>
     [[nodiscard]] constexpr int CountTrailingZeros(T x) noexcept {
-        return Detail::CountTrailingZeros(static_cast<Trait::MakeUnsigned_T<T>>(x));
+        Trait::MakeUnsigned_T<T> ux = x;
+#if defined(__GNUC__) || defined(__clang__)
+        if constexpr (sizeof(T) <= 4) {
+            if (ux == 0) {
+                return Trait::IntegralTrait<T>::NumBits;
+            }
+            return __builtin_ctz(ux);
+        } else if constexpr (sizeof(T) == 8) {
+            return __builtin_ctzll(ux);
+        } else {
+            static_assert(sizeof(T) == 16, "Unexpected integer size");
+            const uint64_t low = ux;
+            if (low != 0) {
+                return __builtin_ctzll(low);
+            }
+            const uint64_t high = ux >> 64;
+            return __builtin_ctzll(high) + 64;
+        }
+#else // !defined(__GNUC__) && !defined(__clang__)
+#   if defined(CTZ_USE_TZCNT_BSF_INTRINSICS)
+        if (!__builtin_is_constant_evaluated()) {
+            return X86_X64::CountTrailingZeros(ux);
+        }
+#   endif
+        return Detail::Common::CountTrailingZeros(ux);
+#endif
     }
 
 } // namespace Bit

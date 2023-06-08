@@ -8,7 +8,6 @@
 #include "../Concept/UnsignedInteger.h"
 #include "../Trait/IntegralTrait.h"
 #include "../Trait/TypeModification/SignModifier/MakeUnsigned.h"
-#include "../Macro.h"
 
 #include <cstdint>
 
@@ -25,85 +24,19 @@ extern "C" {
 
 
 
-namespace Detail {
+namespace Detail::Common {
 
-    namespace Common {
-
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] constexpr T LeftCircularShift(T x, unsigned n) noexcept {
-            constexpr int NumBits = Trait::IntegralTrait<T>::NumBits;
-            n %= NumBits;
-            if (n == 0) {
-                return x;
-            }
-            return (x << n) | (x >> (NumBits - n));
+    template <Concept::UnsignedInteger T>
+    [[nodiscard]] constexpr T LeftCircularShift(T x, unsigned n) noexcept {
+        constexpr int NumBits = Trait::IntegralTrait<T>::NumBits;
+        n %= NumBits;
+        if (n == 0) {
+            return x;
         }
-
-    } // namespace Common
-
-
-
-    [[nodiscard]] constexpr uint8_t LeftCircularShift(uint8_t x, unsigned n) noexcept {
-#if __has_builtin(__builtin_rotateleft8)
-        return __builtin_rotateleft8(x, n);
-#else // __has_builtin(__builtin_rotateleft8)
-#   if defined(_MSC_VER)
-        if(!__builtin_is_constant_evaluated()) {
-            return _rotl8(x, n);
-        }
-#   endif
-        return Common::LeftCircularShift(x, n);
-#endif
+        return (x << n) | (x >> (NumBits - n));
     }
 
-    [[nodiscard]] constexpr uint16_t LeftCircularShift(uint16_t x, unsigned n) noexcept {
-#if __has_builtin(__builtin_rotateleft16)
-        return __builtin_rotateleft16(x, n);
-#else // __has_builtin(__builtin_rotateleft16)
-#   if defined(_MSC_VER)
-        if(!__builtin_is_constant_evaluated()) {
-            return _rotl16(x, n);
-        }
-#   endif
-        return Common::LeftCircularShift(x, n);
-#endif
-    }
-
-    [[nodiscard]] constexpr uint32_t LeftCircularShift(uint32_t x, unsigned n) noexcept {
-#if __has_builtin(__builtin_rotateleft32)
-        return __builtin_rotateleft32(x, n);
-#else // __has_builtin(__builtin_rotateleft32)
-#   if defined(_MSC_VER)
-        if(!__builtin_is_constant_evaluated()) {
-            return _rotl(x, n);
-        }
-#   endif
-        return Common::LeftCircularShift(x, n);
-#endif
-    }
-
-    [[nodiscard]] constexpr uint64_t LeftCircularShift(uint64_t x, unsigned n) noexcept {
-#if __has_builtin(__builtin_rotateleft64)
-        return __builtin_rotateleft64(x, n);
-#else // __has_builtin(__builtin_rotateleft64)
-#   if defined(_MSC_VER)
-        if(!__builtin_is_constant_evaluated()) {
-            return _rotl64(x, n);
-        }
-#   endif
-        return Common::LeftCircularShift(x, n);
-#endif
-    }
-
-#ifdef __SIZEOF_INT128__
-
-    [[nodiscard]] constexpr unsigned __int128 LeftCircularShift(__uint128_t x, unsigned n) noexcept {
-        return Common::LeftCircularShift(x, n);
-    }
-
-#endif
-
-} // namespace Detail
+} // namespace Detail::Common
 
 
 
@@ -111,7 +44,37 @@ namespace Bit {
 
     template <Concept::Integer T>
     [[nodiscard]] constexpr T LeftCircularShift(T x, unsigned n) noexcept {
-        return Detail::LeftCircularShift(static_cast<Trait::MakeUnsigned_T<T>>(x), n);
+        Trait::MakeUnsigned_T<T> ux = x;
+#if defined(__clang__)
+        if constexpr (sizeof(T) == 1) {
+            return __builtin_rotateleft8(ux);
+        } else if constexpr (sizeof(T) == 2) {
+            return __builtin_rotateleft16(ux);
+        } else if constexpr (sizeof(T) == 4) {
+            return __builtin_rotateleft32(ux);
+        } else if constexpr (sizeof(T) == 8) {
+            return __builtin_rotateleft64(ux);
+        } else {
+            static_assert(sizeof(T) == 16, "Unexpected integer size");
+            return Detail::Common::LeftCircularShift(x, n);
+        }
+#else // !defined(__clang__)
+#   ifdef _MSC_VER
+        if (!__builtin_is_constant_evaluated()) {
+            if constexpr (sizeof(T) == 1) {
+                return _rotl8(ux);
+            } else if constexpr (sizeof(T) == 2) {
+                return _rotl16(ux);
+            } else if constexpr (sizeof(T) == 4) {
+                return _rotl(ux);
+            } else {
+                static_assert(sizeof(T) == 8, "Unexpected integer size");
+                return _rotl64(ux);
+            }
+        }
+#   endif
+        return Detail::Common::LeftCircularShift(x, n);
+#endif
     }
 
 } // namespace Bit

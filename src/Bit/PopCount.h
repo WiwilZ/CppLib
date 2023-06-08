@@ -41,32 +41,31 @@ extern "C" {
 
 namespace Detail {
 
-    static constexpr uint8_t PopCountTable[256]{
-            0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
-            1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-            1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-            2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-            1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-            2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-            2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-            3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-            1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-            2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-            2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-            3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-            2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-            3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-            3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-            4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
-    };
-
-    
-    [[nodiscard]] constexpr int PopCount(uint8_t x) noexcept {
-        return PopCountTable[x];
-    }
-
-
     namespace Common {
+
+        static constexpr uint8_t PopCountTable[256]{
+                0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
+                1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+                1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+                2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+                1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+                2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+                2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+                3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+                1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+                2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+                2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+                3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+                2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+                3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+                3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+                4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
+        };
+
+
+        [[nodiscard]] constexpr int PopCount(uint8_t x) noexcept {
+            return PopCountTable[x];
+        }
 
         [[nodiscard]] constexpr int PopCount(uint16_t x) noexcept {
             return (PopCountTable[x & 0xFF] << 8) + PopCountTable[x >> 8];
@@ -109,36 +108,26 @@ namespace Detail {
 
 #ifdef POPCNT_USE_POPCNT_INTRINSICS
 
-    namespace PopCnt {
-
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] __forceinline int PopCount(T x) noexcept {
-            if constexpr (sizeof(T) <= 2) {
-                return __popcnt16(x);
-            } else if constexpr (sizeof(T) == 4) {
-                return __popcnt(x);
-            } else {
-#   ifdef _M_IX86
-                return static_cast<int>(__popcnt(x >> 32) + __popcnt(static_cast<unint32_t>(x)));
-#   else // !defined(_M_IX86)
-                return static_cast<int>(__popcnt64(x));
-#   endif // _M_IX86
-            }
-        }
-
-    } // namespace PopCnt
-
-
     namespace X86_X64 {
 
         template <Concept::UnsignedInteger T>
         [[nodiscard]] __forceinline int PopCount(T x) noexcept {
 #   ifndef __AVX2__
             if (__isa_available < __ISA_AVAILABLE_AVX2) {
-                return return Common::PopCount(x);
+                return Common::PopCount(x);
             }
 #   endif // __AVX2__
-            return PopCnt::PopCount(x);
+            if constexpr (sizeof(T) <= 2) {
+                return __popcnt16(x);
+            } else if constexpr (sizeof(T) == 4) {
+                return __popcnt(x);
+            } else {
+#   ifdef _M_IX86
+                return __popcnt(x >> 32) + __popcnt(x);
+#   else // !defined(_M_IX86)
+                return __popcnt64(x);
+#   endif
+            }
         }
 
     } // namespace X86_X64
@@ -159,66 +148,6 @@ namespace Detail {
 
 #endif // POPCNT_USE_NEON_INTRINSICS
 
-
-    namespace MSVC {
-
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] constexpr int PopCount(T x) noexcept {
-#ifdef _MSC_VER
-#   if defined(POPCNT_USE_POPCNT_INTRINSICS)
-            if (!__builtin_is_constant_evaluated()) {
-                return X86_X64::PopCount(x);
-            }
-#   elif defined(POPCNT_USE_NEON_INTRINSICS)
-            if (!__builtin_is_constant_evaluated()) {
-                return Arm64::PopCount(x);
-            }
-#   endif
-#endif
-            return Common::PopCount(x);
-        }
-
-    } // namespace MSVC
-
-
-
-    [[nodiscard]] constexpr int PopCount(uint16_t x) noexcept {
-#if __has_builtin(__builtin_popcount)
-        return __builtin_popcount(x);
-#else // !__has_builtin(__builtin_popcount)
-        return MSVC::PopCount(x);
-#endif
-    }
-
-
-    [[nodiscard]] constexpr int PopCount(uint32_t x) noexcept {
-#if __has_builtin(__builtin_popcount)
-        return __builtin_popcount(x);
-#else // !__has_builtin(__builtin_popcount)
-        return MSVC::PopCount(x);
-#endif
-    }
-
-    [[nodiscard]] constexpr int PopCount(uint64_t x) noexcept {
-#if __has_builtin(__builtin_popcountll)
-        return __builtin_popcountll(x);
-#else // !__has_builtin(__builtin_popcountll)
-        return MSVC::PopCount(x);
-#endif
-    }
-
-#ifdef __SIZEOF_INT128__
-
-    [[nodiscard]] constexpr int PopCount(__uint128_t x) noexcept {
-#   if __has_builtin(__builtin_popcountll)
-        return __builtin_popcountll(x >> 64) + __builtin_popcountll(x);
-#   else // !__has_builtin(__builtin_popcountll)
-        return Common::PopCount(x);
-#   endif
-    }
-
-#endif
-
 } // namespace Detail
 
 
@@ -228,7 +157,28 @@ namespace Bit {
 
     template <Concept::Integer T>
     [[nodiscard]] constexpr int PopCount(T x) noexcept {
-        return Detail::PopCount(static_cast<Trait::MakeUnsigned_T<T>>(x));
+        Trait::MakeUnsigned_T<T> ux = x;
+#if defined(__GNUC__) || defined(__clang__)
+        if constexpr (sizeof(T) <= 4) {
+            return __builtin_popcount(ux);
+        } else if constexpr (sizeof(T) == 8) {
+            return __builtin_popcountll(ux);
+        } else {
+            static_assert(sizeof(T) == 16, "Unexpected integer size");
+            return __builtin_popcountll(ux >> 64) + __builtin_popcountll(ux);
+        }
+#else // !defined(__GNUC__) && !defined(__clang__)
+#   if defined(POPCNT_USE_POPCNT_INTRINSICS)
+        if (!__builtin_is_constant_evaluated()) {
+            return Detail::X86_X64::PopCount(ux);
+        }
+#   elif defined(POPCNT_USE_NEON_INTRINSICS)
+        if (!__builtin_is_constant_evaluated()) {
+            return Detail::Arm_Arm64::PopCount(ux);
+        }
+#   endif
+        return Detail::Common::PopCount(ux);
+#endif
     }
 
 } // namespace Bit
@@ -236,3 +186,5 @@ namespace Bit {
 
 
 #undef POPCNT_USE_POPCNT_INTRINSICS
+#undef POPCNT_USE_NEON_INTRINSICS
+

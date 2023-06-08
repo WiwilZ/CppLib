@@ -6,41 +6,49 @@
 
 
 #if defined(__clang__)
-#define CLANG_COMPILER
+#   define CLANG_COMPILER
 #endif
 
-#if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && !defined(__NVCOMPILER)
-#define GCC_COMPILER
+#if defined(__GNUC__)
+#   define GCC_COMPILER
 #endif
 
 #ifdef _MSC_VER
-#define MSVC_COMPILER
+#   define MSVC_COMPILER
 #endif
 
 
 #ifndef __has_builtin
-#define __has_builtin(x) 0
+#   define __has_builtin(x) 0
 #endif
 
 
 #if __has_cpp_attribute(assume)
-#define ASSUME(x) [[assume(x)]]
+#   define ASSUME(x) [[assume(x)]]
 #elif defined(__clang__)
-#define ASSUME(x) __builtin_assume(x)
+#   define ASSUME(x) __builtin_assume(x)
 #elif defined(__GNUC__)
-#define ASSUME(x) __attribute__((assume(x)))
+#   define ASSUME(x) __attribute__((assume(x)))
 #elif defined(_MSC_VER)
-#define ASSUME(x) __assume(x)
+#   define ASSUME(x) __assume(x)
 #else
-#define ASSUME(x)
+#   define ASSUME(x)
 #endif
 
 
 #if defined(__GNUC__) || defined(__clang__)
-#define FORCEINLINE __attribute__((always_inline))
+#   define FORCEINLINE __attribute__((always_inline))
 #elif defined(_MSC_VER)
-#define FORCEINLINE __forceinline
+#   define FORCEINLINE __forceinline
 #else
-#define FORCEINLINE inline
+#   define FORCEINLINE inline
 #endif
 
+
+#if defined(__GNUC__) || defined(__clang__)
+#   define NOINLINE __attribute__((__noinline__))
+#elif defined(_MSC_VER)
+#   define NOINLINE __declspec(noinline)
+#else
+#   define NOINLINE
+#endif

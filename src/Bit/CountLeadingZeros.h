@@ -9,7 +9,6 @@
 #include "../Concept/UnsignedInteger.h"
 #include "../Trait/IntegralTrait.h"
 #include "../Trait/TypeModification/SignModifier/MakeUnsigned.h"
-#include "../Macro.h"
 
 #include <cstdint>
 
@@ -48,32 +47,32 @@ extern "C" {
 
 namespace Detail {
 
-    static constexpr uint8_t LeadingZerosTable[256]{
-            8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
-            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-
-
-    [[nodiscard]] constexpr int CountLeadingZeros(uint8_t x) noexcept {
-        return LeadingZerosTable[x];
-    }
-
-
     namespace Common {
+
+        static constexpr uint8_t LeadingZerosTable[256]{
+                8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
+                3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        };
+
+
+        [[nodiscard]] constexpr int CountLeadingZeros(uint8_t x) noexcept {
+            return LeadingZerosTable[x];
+        }
+
         [[nodiscard]] constexpr int CountLeadingZeros(uint16_t x) noexcept {
             return 16 - (static_cast<int>(Bit::BitCast<uint32_t>(static_cast<float>(x)) >> 23) - 0x7f + 1);
         }
@@ -129,65 +128,67 @@ namespace Detail {
 
 #ifdef CLZ_USE_LZCNT_BSR_INTRINSICS
 
-    namespace LZCNT {
-
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] __forceinline int CountLeadingZeros(T x) noexcept {
-            if constexpr (sizeof(T) <= 2) {
-                return __lzcnt16(x) - (16 - Trait::IntegralTrait<T>::NumBits);
-            } else if constexpr (sizeof(T) == 4) {
-                return __lzcnt(x);
-            } else {
-#   ifdef _M_IX86
-                const uint32_t high = x >> 32;
-                if (high != 0) {
-                    return __lzcnt(high);
-                }
-                const uint32_t low = x;
-                return 32 + __lzcnt(low);
-#   else // !defined(_M_IX86)
-                return static_cast<int>(__lzcnt64(x));
-#   endif
-            }
-        }
-
-    } // namespace LZCNT
-
-
-    namespace BSR {
-
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] __forceinline int CountLeadingZeros(T x) noexcept {
-            unsigned long result;
-            if constexpr (sizeof(T) <= 4) {
-                constexpr int NumBits = Trait::IntegralTrait<T>::NumBits;
-                if (_BitScanReverse(&result, x)) {
-                    return NumBits - (result + 1);
-                }
-                return NumBits;
-            } else {
-#   ifdef _M_IX86
-                const uint32_t high = x >> 32;
-                if (_BitScanReverse(&result, high)) {
-                    return 32 - (result + 1);
-                }
-                const uint32_t low = x;
-                if (_BitScanReverse(&result, low)) {
-                    return 64 - (result + 1);
-                }
-#   else // !defined(_M_IX86)
-                if (_BitScanReverse64(&result, x)) {
-                    return 64 - (result + 1);
-                }
-#   endif
-                return 64;
-            }
-        }
-
-    } // namespace BSR
-
-
     namespace X86_X64 {
+
+        namespace LZCNT {
+
+            template <Concept::UnsignedInteger T>
+            [[nodiscard]] __forceinline int CountLeadingZeros(T x) noexcept {
+                if constexpr (sizeof(T) <= 2) {
+                    return __lzcnt16(x) - (16 - Trait::IntegralTrait<T>::NumBits);
+                } else if constexpr (sizeof(T) == 4) {
+                    return __lzcnt(x);
+                } else {
+                    static_assert(sizeof(T) == 8, "Unexpected integer size");
+#   ifdef _M_IX86
+                    const uint32_t high = x >> 32;
+                    if (high != 0) {
+                        return __lzcnt(high);
+                    }
+                    const uint32_t low = x;
+                    return 32 + __lzcnt(low);
+#   else // !defined(_M_IX86)
+                    return __lzcnt64(x);
+#   endif
+                }
+            }
+
+        } // namespace LZCNT
+
+
+        namespace BSR {
+
+            template <Concept::UnsignedInteger T>
+            [[nodiscard]] __forceinline int CountLeadingZeros(T x) noexcept {
+                unsigned long result;
+                if constexpr (sizeof(T) <= 4) {
+                    constexpr int NumBits = Trait::IntegralTrait<T>::NumBits;
+                    if (_BitScanReverse(&result, x)) {
+                        return NumBits - (result + 1);
+                    }
+                    return NumBits;
+                } else {
+                    static_assert(sizeof(T) == 8, "Unexpected integer size");
+#   ifdef _M_IX86
+                    const uint32_t high = x >> 32;
+                    if (_BitScanReverse(&result, high)) {
+                        return 32 - (result + 1);
+                    }
+                    const uint32_t low = x;
+                    if (_BitScanReverse(&result, low)) {
+                        return 64 - (result + 1);
+                    }
+#   else // !defined(_M_IX86)
+                    if (_BitScanReverse64(&result, x)) {
+                        return 64 - (result + 1);
+                    }
+#   endif
+                    return 64;
+                }
+            }
+
+        } // namespace BSR
+
 
         template <Concept::UnsignedInteger T>
         [[nodiscard]] __forceinline int CountLeadingZeros(T x) noexcept {
@@ -217,6 +218,7 @@ namespace Detail {
             if constexpr (sizeof(T) <= 4) {
                 return _CountLeadingZeros(x) - (32 - NumBits);
             } else {
+                static_assert(sizeof(T) == 8, "Unexpected integer size");
                 return _CountLeadingZeros64(x);
             }
         }
@@ -224,72 +226,6 @@ namespace Detail {
     } // namespace Arm_Arm64
 
 #endif // CLZ_USE_CLZ_INTRINSICS
-
-
-    namespace MSVC {
-
-        template <Concept::UnsignedInteger T>
-        [[nodiscard]] constexpr int CountLeadingZeros(T x) noexcept {
-#ifdef _MSC_VER
-#   if defined(CLZ_USE_LZCNT_BSR_INTRINSICS)
-            if (!__builtin_is_constant_evaluated()) {
-                return X86_X64::CountLeadingZeros(x);
-            }
-#   elif defined(CLZ_USE_CLZ_INTRINSICS)
-            if (!__builtin_is_constant_evaluated()) {
-                return Arm_Arm64::CountLeadingZeros(x);
-            }
-#   endif
-#endif
-            return Common::CountLeadingZeros(x);
-        }
-
-    } // namespace MSVC
-
-
-
-    [[nodiscard]] constexpr int CountLeadingZeros(uint16_t x) noexcept {
-#if __has_builtin(__builtin_clzs)
-        return __builtin_clzs(x);
-#elif __has_builtin(__builtin_clz)
-        return __builtin_clz(x) - 16;
-#else // !__has_builtin(__builtin_clzs) && !__has_builtin(__builtin_clz)
-        return MSVC::CountLeadingZeros(x);
-#endif
-    }
-
-    [[nodiscard]] constexpr int CountLeadingZeros(uint32_t x) noexcept {
-#if __has_builtin(__builtin_clz)
-        return __builtin_ctz(x);
-#else // !__has_builtin(__builtin_clz)
-        return MSVC::CountLeadingZeros(x);
-#endif
-    }
-
-    [[nodiscard]] constexpr int CountLeadingZeros(uint64_t x) noexcept {
-#if __has_builtin(__builtin_clzll)
-        return __builtin_clzll(x);
-#else // !__has_builtin(__builtin_clzll)
-        return MSVC::CountLeadingZeros(x);
-#endif
-    }
-
-#ifdef __SIZEOF_INT128__
-
-    [[nodiscard]] constexpr int CountLeadingZeros(__uint128_t x) noexcept {
-#if __has_builtin(__builtin_clzll)
-        const uint64_t high = x >> 64;
-        if (high != 0) {
-            return __builtin_clzll(high);
-        }
-        const uint64_t low = x;
-        return 64 + __builtin_clzll(low);
-#else // !__has_builtin(__builtin_clzll)
-        return Common::CountLeadingZeros(x);
-#endif
-    }
-
-#endif
 
 } // namespace Detail
 
@@ -299,7 +235,33 @@ namespace Bit {
 
     template <Concept::Integer T>
     [[nodiscard]] constexpr int CountLeadingZeros(T x) noexcept {
-        return Detail::CountLeadingZeros(static_cast<Trait::MakeUnsigned_T<T>>(x));
+        Trait::MakeUnsigned_T<T> ux = x;
+#if defined(__GNUC__) || defined(__clang__)
+        if constexpr (sizeof(T) <= 4) {
+            return __builtin_clz(ux) - (32 - Trait::IntegralTrait<T>::NumBits);
+        } else if constexpr (sizeof(T) == 8) {
+            return __builtin_clzll(ux);
+        } else {
+            static_assert(sizeof(T) == 16, "Unexpected integer size");
+            const uint64_t high = ux >> 64;
+            if (high != 0) {
+                return __builtin_clzll(high);
+            }
+            const uint64_t low = ux;
+            return 64 + __builtin_clzll(low);
+        }
+#else // !defined(__GNUC__) && !defined(__clang__)
+#   if defined(CLZ_USE_LZCNT_BSR_INTRINSICS)
+        if (!__builtin_is_constant_evaluated()) {
+            return Detail::X86_X64::CountLeadingZeros(ux);
+        }
+#   elif defined(CLZ_USE_CLZ_INTRINSICS)
+        if (!__builtin_is_constant_evaluated()) {
+            return Detail::Arm_Arm64::CountLeadingZeros(ux);
+        }
+#   endif
+        return Detail::Common::CountLeadingZeros(ux);
+#endif
     }
 
 } // namespace Bit
