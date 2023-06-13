@@ -66,7 +66,7 @@ namespace Trait {
                 DBL_TRUE_MIN;
 #else // !defined(_MSC_VER)
                 __DBL_DENORM_MIN__;
-#endif // _MSC_VER
+#endif
     };
 
 

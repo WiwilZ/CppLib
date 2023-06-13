@@ -11,7 +11,11 @@
 namespace Trait {
 
     template <typename T>
-    struct IntegralTrait {
+    struct IntegralTrait;
+
+
+    template <Concept::Integral T>
+    struct IntegralTrait<T> {
         static constexpr bool IsSigned = static_cast<T>(-1) < static_cast<T>(0);
         static constexpr bool IsModulo = !IsSigned;
         static constexpr int NumBytes = sizeof(T);

@@ -4,7 +4,7 @@
 #include "Endian.h"
 #include "Utils.h"
 #include "Macro.h"
-
+#include <compare>
 #include <iostream>
 
 
