@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "CountLeadingZeros.h"
+#include "CountLeadingZeros_BitLength.h"
 #include "../Concept/Integer.h"
 
 

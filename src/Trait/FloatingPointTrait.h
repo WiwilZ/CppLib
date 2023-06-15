@@ -70,12 +70,12 @@ namespace Trait {
     };
 
 
-#ifdef _MSC_VER
+#if defined(_WIN32) || defined(__arm__) || defined(__NVPTX__) || defined(__AMDGPU__) || defined(__APPLE__) && defined(__aarch64__)
 
     template <>
     struct FloatingPointTrait<long double> : FloatingPointTrait<double> {};
 
-#else // !defined(_MSC_VER)
+#else
 
     template <>
     struct FloatingPointTrait<long double> {
