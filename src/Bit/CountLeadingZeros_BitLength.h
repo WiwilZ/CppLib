@@ -183,8 +183,6 @@ namespace Detail::Common {
 
 #if defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)
 
-#define USE_X86_64_INTRINSICS
-
 #ifndef __AVX2__
 
 #include <isa_availability.h>
@@ -276,8 +274,6 @@ namespace Detail::X86_X64 {
 
 #elif defined(_M_ARM) || defined(_M_ARM64)
 
-#define USE_ARM_ARM64_INTRINSICS
-
 extern "C" {
     unsigned int _CountLeadingZeros(unsigned long);
     unsigned int _CountLeadingZeros64(unsigned __int64);
@@ -311,11 +307,11 @@ namespace Bit {
 
     template <Concept::Integer T>
     [[nodiscard]] constexpr int CountLeadingZeros(T x) noexcept {
-#if defined(USE_X86_64_INTRINSICS)
+#if defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)
         if (!__builtin_is_constant_evaluated()) {
             return Detail::X86_X64::CountLeadingZeros(x);
         }
-#elif defined(USE_ARM_ARM64_INTRINSICS)
+#elif defined(_M_ARM) || defined(_M_ARM64)
         if (!__builtin_is_constant_evaluated()) {
             return Detail::Arm_Arm64::CountLeadingZeros(x);
         }
@@ -337,12 +333,5 @@ namespace Bit {
 } // namespace Bit
 
 #endif
-
-
-#undef USE_X86_64_INTRINSICS
-#undef USE_ARM_ARM64_INTRINSICS
-
-
-
 
 
