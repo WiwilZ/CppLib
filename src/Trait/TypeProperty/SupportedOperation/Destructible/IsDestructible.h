@@ -7,7 +7,7 @@
 #include "../../../Constant.h"
 
 
-#if __has_builtin(__is_destructible) || defined(_MSC_VER)
+#if HAS_BUILTIN(__is_destructible) || defined(_MSC_VER)
 
 namespace Trait {
 
@@ -16,7 +16,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !( __has_builtin(__is_destructible) || defined(_MSC_VER))
+#else // !( HAS_BUILTIN(__is_destructible) || defined(_MSC_VER))
 
 #include "../../../TypeModification/Array/RemoveAllExtents.h"
 #include "../../../TypeProperty/Category/IsObject.h"

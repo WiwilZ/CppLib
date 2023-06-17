@@ -7,7 +7,7 @@
 #include "../../Constant.h"
 
 
-#if __has_builtin(__is_layout_compatible) || defined(_MSC_VER) && !defined(__clang__)
+#if HAS_BUILTIN(__is_layout_compatible) || defined(_MSC_VER) && !defined(__clang__)
 
 namespace Trait {
 

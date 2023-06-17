@@ -8,7 +8,7 @@
 #include "../../../../Macro.h"
 
 
-#if __has_builtin(__is_function)
+#if HAS_BUILTIN(__is_function)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // __has_builtin(__is_function)
+#else // HAS_BUILTIN(__is_function)
 
 #include "../../Property/IsConst.h"
 #include "IsReference.h"

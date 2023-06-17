@@ -8,7 +8,7 @@
 #include "../../../../../Macro.h"
 
 
-#if __has_builtin(__is_floating_point)
+#if HAS_BUILTIN(__is_floating_point)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !__has_builtin(__is_floating_point)
+#else // !HAS_BUILTIN(__is_floating_point)
 
 #include "../../../Relationship/IsAnyOf.h"
 #include "../../../../TypeModification/CVSpecifier/RemoveCV.h"

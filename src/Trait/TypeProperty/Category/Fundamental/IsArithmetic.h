@@ -8,7 +8,7 @@
 #include "../../../../Macro.h"
 
 
-#if __has_builtin(__is_arithmetic)
+#if HAS_BUILTIN(__is_arithmetic)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !__has_builtin(__is_arithmetic)
+#else // !HAS_BUILTIN(__is_arithmetic)
 
 #include "Arithmetic/IsIntegral.h"
 #include "Arithmetic/IsFloatingPoint.h"

@@ -8,7 +8,7 @@
 #include "../../../Macro.h"
 
 
-#if __has_builtin(__is_scalar)
+#if HAS_BUILTIN(__is_scalar)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !__has_builtin(__is_scalar)
+#else // !HAS_BUILTIN(__is_scalar)
 
 #include "Fundamental/IsArithmetic.h"
 #include "Compound/IsPointer.h"

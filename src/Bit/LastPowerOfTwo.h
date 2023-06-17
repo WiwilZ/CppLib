@@ -4,19 +4,18 @@
 
 #pragma once
 
-#include "CountLeadingZeros_BitLength.h"
-#include "../Concept/Integer.h"
+#include "BitLength.h"
+#include "../Concept/Integral.h"
+
 
 
 namespace Bit {
-
-    template <Concept::Integer T>
+    template <Concept::Integral T>
     [[nodiscard]] constexpr T LastPowerOf2(T x) noexcept {
         if (x <= 1) {
             return 0;
         }
         return static_cast<T>(1) << (BitLength(x) - 2);
     }
-
-} // namespace Bit
+}
 

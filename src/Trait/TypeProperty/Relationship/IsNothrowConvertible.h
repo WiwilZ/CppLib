@@ -7,7 +7,7 @@
 #include "../../Constant.h"
 
 
-#if __has_builtin(__is_nothrow_convertible)
+#if HAS_BUILTIN(__is_nothrow_convertible)
 
 namespace Trait {
 
@@ -16,7 +16,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !__has_builtin(__is_nothrow_convertible)
+#else // !HAS_BUILTIN(__is_nothrow_convertible)
 
 #include "IsConvertible.h"
 #include "../Category/Fundamental/IsVoid.h"

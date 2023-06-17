@@ -8,7 +8,7 @@
 #include "../../../../../Macro.h"
 
 
-#if __has_builtin(__is_integral)
+#if HAS_BUILTIN(__is_integral)
 
 namespace Trait {
 
@@ -30,7 +30,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !__has_builtin(__is_integral) && !_MSC_VER
+#else // !HAS_BUILTIN(__is_integral) && !_MSC_VER
 
 namespace Trait {
 

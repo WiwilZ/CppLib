@@ -4,15 +4,14 @@
 
 #pragma once
 
-#include "CountLeadingZeros_BitLength.h"
-#include "../Concept/Integer.h"
+#include "CountLeadingZeros.h"
+#include "../Concept/Integral.h"
+
 
 
 namespace Bit {
-
-    template <Concept::Integer T>
+    template <Concept::Integral T>
     [[nodiscard]] constexpr int CountLeadingOnes(T x) noexcept {
         return CountLeadingZeros(~x);
     }
-
-} // namespace Bit
+}

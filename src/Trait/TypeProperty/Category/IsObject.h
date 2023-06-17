@@ -8,7 +8,7 @@
 #include "../../../Macro.h"
 
 
-#if __has_builtin(__is_object)
+#if HAS_BUILTIN(__is_object)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 }
 
-#else // !__has_builtin(__is_object)
+#else // !HAS_BUILTIN(__is_object)
 
 #include "../Property/IsConst.h"
 #include "Fundamental/IsVoid.h"

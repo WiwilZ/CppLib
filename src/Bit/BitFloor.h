@@ -4,18 +4,17 @@
 
 #pragma once
 
-#include "CountLeadingZeros_BitLength.h"
-#include "../Concept/Integer.h"
+#include "BitLength.h"
+#include "../Concept/Integral.h"
+
 
 
 namespace Bit {
-
-    template <Concept::Integer T>
+    template <Concept::Integral T>
     [[nodiscard]] constexpr T BitFloor(T x) noexcept {
         if (x <= 0) {
             return 0;
         }
         return static_cast<T>(1) << (BitLength(x) - 1);
     }
-
-} // namespace Bit
+}

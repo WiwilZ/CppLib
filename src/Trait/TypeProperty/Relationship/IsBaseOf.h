@@ -8,7 +8,7 @@
 #include "../../Constant.h"
 
 
-#if __has_builtin(__is_base_of) || defined(_MSC_VER)
+#if HAS_BUILTIN(__is_base_of) || defined(_MSC_VER)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !(__has_builtin(__is_base_of) || defined(_MSC_VER))
+#else // !(HAS_BUILTIN(__is_base_of) || defined(_MSC_VER))
 
 #include "../../TypeModification/Void_T.h"
 #include "../Category/Compound/IsClass.h"

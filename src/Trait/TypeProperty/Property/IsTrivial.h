@@ -8,30 +8,22 @@
 #include "../../../Macro.h"
 
 
-#if __has_builtin(__is_trivial)
-
+#if HAS_BUILTIN(__is_trivial)
 namespace Trait {
 
     template <typename T>
     constexpr bool IsTrivial_V = __is_trivial(T);
 
 } // namespace Trait
-
-#else // !__has_builtin(__is_trivial)
-
+#else // !HAS_BUILTIN(__is_trivial)
 namespace Trait {
-
     template <typename T>
     constexpr bool IsTrivial_V = __is_trivially_constructible(T) && __is_trivially_copyable(T);
-
-} // namespace Trait
-
+}
 #endif
 
 
 namespace Trait {
-
     template <typename T>
     struct IsTrivial : BoolConstant<IsTrivial_V<T>> {};
-
-} // namespace Trait
+}

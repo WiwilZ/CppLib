@@ -4,70 +4,13 @@
 
 #pragma once
 
-#include "../Concept/Integer.h"
-#include "../Concept/UnsignedInteger.h"
-#include "../Trait/TypeModification/SignModifier/MakeUnsigned.h"
+#include "BitCast.h"
+#include "../Concept/TriviallyCopyable.h"
+#include "../Trait/MakeIntegerType.h"
 #include "../Macro.h"
 
 #include <cstdint>
 
-
-
-
-#if defined(__GNUC__) || defined(__clang__)
-
-namespace Bit {
-
-    template <Concept::Integer T>
-    [[nodiscard]] constexpr T ByteSwap(T x) noexcept {
-        if constexpr (sizeof(T) == 1) {
-            return x;
-        } else if constexpr (sizeof(T) == 2) {
-            return __builtin_bswap16(x);
-        } else if constexpr (sizeof(T) == 4) {
-            return __builtin_bswap32(x);
-        } else if constexpr (sizeof(T) == 8) {
-            return __builtin_bswap64(x);
-        } else {
-            static_assert(sizeof(T) == 16, "Unexpected integer size");
-#if __has_builtin(__builtin_bswap128)
-            return __builtin_bswap128(x);
-#else // !__has_builtin(__builtin_bswap128)
-            return (static_cast<__uint128_t>(__builtin_bswap64(x)) << 64) | __builtin_bswap64(static_cast<__uint128_t>(x) >> 64);
-# endif
-        }
-    }
-
-} // namespace Bit
-
-#else // !defined(__GNUC__) && !defined(__clang__)
-
-namespace Detail::Common {
-
-    template <Concept::Integer T>
-    [[nodiscard]] constexpr T ByteSwap(T x) noexcept {
-        if constexpr (sizeof(T) == 1) {
-            return x;
-        } else if constexpr (sizeof(T) == 2) {
-            return (x << 8) | (static_cast<uint16_t>(x) >> 8);
-        } else if constexpr (sizeof(T) == 4) {
-            uint32_t ux = x;
-            return (ux << 24) | ((ux & 0xff00) << 8) | ((ux >> 8) & 0xff00) | (ux >> 24);
-        } else if constexpr (sizeof(T) == 8) {
-            uint64_t ux = x;
-            return (ux << 56) | ((ux & 0xff00) << 40) | ((ux & 0xff0000) << 24) | ((ux & 0xff000000) << 8) |
-                        ((ux >> 8) & 0xff000000) | ((ux >> 24) & 0xff0000) | ((ux >> 40) & 0xff00) | (ux >> 56);
-        } else {
-#ifdef __SIZEOF_INT128__
-            static_assert(sizeof(T) == 16, "Unexpected integer size");
-            return (static_cast<__uint128_t>(ByteSwap(static_cast<uint64_t>(x))) << 64) | ByteSwap(static_cast<uint64_t>(static_cast<__uint128_t>(x) >> 64));
-#else
-            static_assert(sizeof(T) <= 8, "Unexpected integer size");
-#endif
-        }
-    }
-
-} // namespace Detail::Common
 
 
 #ifdef _MSC_VER
@@ -79,31 +22,104 @@ extern "C" {
 #endif
 
 
-namespace Bit {
 
-    template <Concept::Integer T>
+namespace Detail {
+    namespace Common {
+        [[nodiscard]] constexpr uint16_t ByteSwap(uint16_t x) noexcept {
+            return (x << 8) | (x >> 8);
+        }
+
+        [[nodiscard]] constexpr uint32_t ByteSwap(uint32_t x) noexcept {
+            x = (x << 16) | (x >> 16);
+            x = ((x & 0x00ff00ff) << 8) | ((x >> 8) & 0x00ff00ff);
+            return x;
+        }
+
+        [[nodiscard]] constexpr uint64_t ByteSwap(uint64_t x) noexcept {
+            x = (x << 32) | (x >> 32);
+            x = ((x & 0x0000ffff0000ffff) << 16) | ((x >> 16) & 0x0000ffff0000ffff);
+            x = ((x & 0x00ff00ff00ff00ff) << 8) | ((x >> 8) & 0x00ff00ff00ff00ff);
+            return x;
+        }
+
+#ifdef __SIZEOF_INT128__
+        [[nodiscard]] constexpr __uint128_t ByteSwap(__uint128_t x) noexcept {
+            constexpr __uint128_t C0 = (__uint128_t{0x00000000FFFFFFFF} << 64) | 0x00000000FFFFFFFF;
+            constexpr __uint128_t C1 = (__uint128_t{0x0000FFFF0000FFFF} << 64) | 0x0000FFFF0000FFFF;
+            constexpr __uint128_t C2 = (__uint128_t{0x00FF00FF00FF00FF} << 64) | 0x00FF00FF00FF00FF;
+            x = (x << 64) | (x >> 64);
+            x = ((x & C0) << 32) | ((x >> 32) & C0);
+            x = ((x & C1) << 16) | ((x >> 16) & C1);
+            x = ((x & C2) << 8) | ((x >> 8) & C2);
+            return x;
+        }
+#endif
+    } // namespace Common
+
+
+
+    [[nodiscard]] constexpr uint16_t ByteSwap(uint16_t x) noexcept {
+#if HAS_BUILTIN(__builtin_bswap16)
+        return __builtin_bswap16(x);
+#else // !HAS_BUILTIN(__builtin_bswap16)
+#   ifdef _MSC_VER
+        if (!__builtin_is_constant_evaluated()) {
+            return _byteswap_ushort(x);
+        }
+#   endif
+        return Common::ByteSwap(x);
+#endif
+    }
+
+    [[nodiscard]] constexpr uint32_t ByteSwap(uint32_t x) noexcept {
+#if HAS_BUILTIN(__builtin_bswap32)
+        return __builtin_bswap32(x);
+#else // !HAS_BUILTIN(__builtin_bswap32)
+#   ifdef _MSC_VER
+        if (!__builtin_is_constant_evaluated()) {
+            return _byteswap_ulong(x);
+        }
+#   endif
+        return Common::ByteSwap(x);
+#endif
+    }
+
+    [[nodiscard]] constexpr uint64_t ByteSwap(uint64_t x) noexcept {
+#if HAS_BUILTIN(__builtin_bswap64)
+        return __builtin_bswap64(x);
+#else // !HAS_BUILTIN(__builtin_bswap64)
+#   ifdef _MSC_VER
+        if (!__builtin_is_constant_evaluated()) {
+            return _byteswap_uint64(x);
+        }
+#   endif
+        return Common::ByteSwap(x);
+#endif
+    }
+
+#if defined(__SIZEOF_INT128__)
+    [[nodiscard]] constexpr __uint128_t ByteSwap(__uint128_t x) noexcept {
+#   if HAS_BUILTIN(__builtin_bswap128)
+        return __builtin_bswap128(x);
+#   elif HAS_BUILTIN(__builtin_bswap64)
+        return (__uint128_t{__builtin_bswap64(x)} << 64) | __builtin_bswap64(x >> 64);
+#   else // !HAS_BUILTIN(__builtin_bswap128) && !HAS_BUILTIN(__builtin_bswap64)
+        return Common::ByteSwap(x);
+#   endif
+    }
+#endif // defined(__SIZEOF_INT128__)
+} // namespace Detail
+
+
+
+namespace Bit {
+    template <Concept::TriviallyCopyable T>
     [[nodiscard]] constexpr T ByteSwap(T x) noexcept {
         if constexpr (sizeof(T) == 1) {
             return x;
         } else {
-#ifdef _MSC_VER
-            if (!__builtin_is_constant_evaluated()) {
-                if constexpr (sizeof(T) == 2) {
-                    return _byteswap_ushort(x);
-                } else if constexpr (sizeof(T) == 4) {
-                    return _byteswap_ulong(x);
-                } else {
-                    static_assert(sizeof(T) == 8, "Unexpected integer size");
-                    return _byteswap_uint64(x);
-                }
-            }
-#endif
-            return Detail::Common::ByteSwap(x);
+            return Bit::BitCast<T>(Detail::ByteSwap(Bit::BitCast<Trait::MakeUInt_T<sizeof(T)>>(x)));
         }
     }
-
-} // namespace Bit
-
-#endif
-
+}
 

@@ -8,7 +8,7 @@
 #include "../../../../Macro.h"
 
 
-#if __has_builtin(__is_enum) || defined(_MSC_VER)
+#if HAS_BUILTIN(__is_enum) || defined(_MSC_VER)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !__has_builtin(__is_enum) && !defined(_MSC_VER)
+#else // !HAS_BUILTIN(__is_enum) && !defined(_MSC_VER)
 
 #include "../IsFundamental.h"
 #include "IsArray.h"

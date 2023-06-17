@@ -8,7 +8,7 @@
 #include "../../Constant.h"
 
 
-#if __has_builtin(__reference_constructs_from_temporary)
+#if HAS_BUILTIN(__reference_constructs_from_temporary)
 
 namespace Trait {
 

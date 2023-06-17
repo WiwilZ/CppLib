@@ -7,7 +7,7 @@
 #include "../../Constant.h"
 
 
-#if __has_builtin(__is_convertible)
+#if HAS_BUILTIN(__is_convertible)
 
 namespace Trait {
 
@@ -16,7 +16,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#elif __has_builtin(__is_convertible_to) || defined(_MSC_VER)
+#elif HAS_BUILTIN(__is_convertible_to) || defined(_MSC_VER)
 
 namespace Trait {
 
@@ -25,7 +25,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !(__has_builtin(__is_convertible) || __has_builtin(__is_convertible_to) || defined(_MSC_VER))
+#else // !(HAS_BUILTIN(__is_convertible) || HAS_BUILTIN(__is_convertible_to) || defined(_MSC_VER))
 
 #include "../Category/Fundamental/IsVoid.h"
 #include "../Category/Compound/IsFunction.h"

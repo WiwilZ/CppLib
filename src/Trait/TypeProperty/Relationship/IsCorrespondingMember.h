@@ -7,7 +7,7 @@
 #include "../../Constant.h"
 
 
-#if __has_builtin(__is_corresponding_member) || defined(_MSC_VER) && !defined(__clang__)
+#if HAS_BUILTIN(__is_corresponding_member) || defined(_MSC_VER) && !defined(__clang__)
 
 namespace Trait {
 
@@ -18,7 +18,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#elif __has_builtin(__builtin_is_corresponding_member)
+#elif HAS_BUILTIN(__builtin_is_corresponding_member)
 
 namespace Trait {
 

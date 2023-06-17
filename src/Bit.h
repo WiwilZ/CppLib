@@ -10,7 +10,7 @@
 #include "Bit/BitReverse.h"
 #include "Bit/ByteSwap.h"
 #include "Bit/CountLeadingOnes.h"
-#include "Bit/CountLeadingZeros_BitLength.h"
+#include "Bit/BitLength.h"
 #include "Bit/CountTrailingOnes.h"
 #include "Bit/CountTrailingZeros.h"
 #include "Bit/IsPowerOfTwo.h"

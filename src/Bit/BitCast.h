@@ -4,16 +4,15 @@
 
 #pragma once
 
-#include "../Trait/TypeProperty/Property/IsTriviallyCopyable.h"
+#include "../Concept/TriviallyCopyable.h"
+
 
 
 namespace Bit {
-
-    template <typename To, typename From>
-    requires (sizeof(To) == sizeof(From) && Trait::IsTriviallyCopyable_V<To> && Trait::IsTriviallyCopyable_V<From>)
+    template <Concept::TriviallyCopyable To, Concept::TriviallyCopyable From>
+    requires (sizeof(To) == sizeof(From))
     [[nodiscard]] constexpr To BitCast(const From& v) noexcept {
         return __builtin_bit_cast(To, v);
     }
-
-} // namespace Bit
+}
 

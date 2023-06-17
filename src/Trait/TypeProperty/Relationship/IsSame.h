@@ -8,7 +8,7 @@
 #include "../../../Macro.h"
 
 
-#if __has_builtin(__is_same)
+#if HAS_BUILTIN(__is_same)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !__has_builtin(__is_same)
+#else // !HAS_BUILTIN(__is_same)
 
 namespace Trait {
 

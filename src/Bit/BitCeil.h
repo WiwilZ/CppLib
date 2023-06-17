@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include "CountLeadingZeros_BitLength.h"
-#include "../Concept/Integer.h"
+#include "BitLength.h"
+#include "../Concept/Integral.h"
 #include "../Trait/IntegralTrait.h"
 
 
-namespace Bit {
 
-    template <Concept::Integer T>
+namespace Bit {
+    template <Concept::Integral T>
     [[nodiscard]] constexpr T BitCeil(T x) noexcept {
         if (x <= 1) {
             return 1;
@@ -22,6 +22,5 @@ namespace Bit {
         }
         return static_cast<T>(1) << shift;
     }
-
-} // namespace Bit
+}
 

@@ -7,7 +7,7 @@
 #include "../../../Constant.h"
 
 
-#if __has_builtin(__is_trivially_destructible) || defined(_MSC_VER)
+#if HAS_BUILTIN(__is_trivially_destructible) || defined(_MSC_VER)
 
 namespace Trait {
 
@@ -16,7 +16,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#elif __has_builtin(__has_trivial_destructor)
+#elif HAS_BUILTIN(__has_trivial_destructor)
 
 #include "IsDestructible.h"
 
@@ -28,7 +28,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // !(__has_builtin(__is_trivially_destructible) || defined(_MSC_VER) || __has_builtin(__has_trivial_destructor))
+#else // !(HAS_BUILTIN(__is_trivially_destructible) || defined(_MSC_VER) || HAS_BUILTIN(__has_trivial_destructor))
 
 #error "Compiler does not support __is_trivially_destructible or __has_trivial_destructor."
 

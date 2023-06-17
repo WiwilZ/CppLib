@@ -8,7 +8,7 @@
 #include "../../.../../../../Macro.h"
 
 
-#if __has_builtin(__is_member_pointer)
+#if HAS_BUILTIN(__is_member_pointer)
 
 namespace Trait {
 
@@ -17,7 +17,7 @@ namespace Trait {
 
 } // namespace Trait
 
-#else // __has_builtin(__is_member_pointer)
+#else // HAS_BUILTIN(__is_member_pointer)
 
 #include "../../../TypeModification/CVSpecifier/RemoveCV.h"
 
