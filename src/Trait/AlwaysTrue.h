@@ -6,8 +6,6 @@
 
 
 namespace Trait {
-
     template <typename>
     constexpr bool AlwaysTrue = true;
-
-} // namespace Trait
+}

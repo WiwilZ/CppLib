@@ -8,8 +8,6 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept Character = Trait::IsCharacter_V<T>;
-
-} // namespace Concept
+}

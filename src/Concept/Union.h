@@ -8,9 +8,7 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept Union = Trait::IsUnion_V<T>;
-
-} // namespace Concept
+}
 

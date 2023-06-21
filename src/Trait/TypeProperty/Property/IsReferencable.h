@@ -10,11 +10,9 @@
 
 #if HAS_BUILTIN(__is_referenceable)
 namespace Trait {
-
     template <typename T>
     constexpr bool IsReferencable_V = __is_referenceable(T);
-
-} // namespace Trait
+}
 #else // !HAS_BUILTIN(__is_referenceable)
 #include "../../TypeModification/Void_T.h"
 

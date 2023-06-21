@@ -5,7 +5,6 @@
 #pragma once
 
 #include <cstdint>
-#include <cstddef>
 
 
 using int8 = int8_t;

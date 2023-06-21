@@ -8,9 +8,7 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept Function = Trait::IsFunction_V<T>;
-
-} // namespace Concept
+}
 

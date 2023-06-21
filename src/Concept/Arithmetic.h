@@ -8,8 +8,6 @@
 
 
 namespace Concept {
-
     template <typename T>
-    concept Arithmetic =  Trait::IsArithmetic_V<T>;
-
-}  // namespace Concept
+    concept Arithmetic = Trait::IsArithmetic_V<T>;
+}

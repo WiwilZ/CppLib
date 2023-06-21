@@ -10,7 +10,6 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsBoundedArray_V = false;
 
@@ -20,6 +19,5 @@ namespace Trait {
 
     template <typename T>
     struct IsBoundedArray : BoolConstant<IsBoundedArray_V<T>> {};
-
-} // namespace Trait
+}
 

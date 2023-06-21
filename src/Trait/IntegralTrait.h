@@ -9,7 +9,6 @@
 
 
 namespace Trait {
-
     template <typename T>
     struct IntegralTrait;
 
@@ -38,5 +37,4 @@ namespace Trait {
         static constexpr bool Min = false;
         static constexpr bool Max = true;
     };
-
-} // namespace Trait
+}

@@ -9,16 +9,11 @@
 
 
 #if HAS_BUILTIN(__is_enum) || defined(_MSC_VER)
-
 namespace Trait {
-
     template <typename T>
     constexpr bool IsEnum_V = __is_enum(T);
-
-} // namespace Trait
-
+}
 #else // !HAS_BUILTIN(__is_enum) && !defined(_MSC_VER)
-
 #include "../IsFundamental.h"
 #include "IsArray.h"
 #include "IsFunction.h"
@@ -29,29 +24,21 @@ namespace Trait {
 
 
 namespace Trait {
-
     namespace Detail {
-
         template <typename T>
         constexpr bool IsClassOrUnion_V = false;
 
         template <typename T>
         constexpr bool IsClassOrUnion_V<int T::*> = true;
-
-    } // namespace Detail
-
+    }
 
     template <typename T>
     constexpr bool IsEnum_V = !(IsFundamental_V<T> || IsArray_V<T> || IsFunction_V<T> || IsPointer_V<T> || IsReference_V<T> || IsMemberPointer_V<T> || Detail::IsClassOrUnion_V<RemoveCV_T<T>>);
-
-} // namespace Trait
-
+}
 #endif
 
 
 namespace Trait {
-
     template <typename T>
     struct IsEnum : BoolConstant<IsEnum_V<T>> {};
-
-} // namespace Trait
+}

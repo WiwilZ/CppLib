@@ -10,7 +10,6 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsUnsignedInteger_V = IsAnyOf_V<RemoveCV_T<T>, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long
 #ifdef __SIZEOF_INT128__
@@ -21,6 +20,5 @@ namespace Trait {
 
     template <typename T>
     struct IsUnsignedInteger : BoolConstant<IsUnsignedInteger_V<T>> {};
-
-} // namespace Trait
+}
 

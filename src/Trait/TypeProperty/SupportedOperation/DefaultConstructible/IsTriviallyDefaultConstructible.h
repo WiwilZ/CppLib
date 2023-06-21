@@ -9,12 +9,10 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsTriviallyDefaultConstructible_V = IsTriviallyConstructible_V<T>;
 
 
     template <typename T>
     struct IsTriviallyDefaultConstructible : BoolConstant<IsTriviallyDefaultConstructible_V<T>> {};
-
-} // namespace Trait
+}

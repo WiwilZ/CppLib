@@ -10,11 +10,9 @@
 
 #if HAS_BUILTIN(__is_polymorphic) || defined(_MSC_VER)
 namespace Trait {
-
     template <typename T>
     constexpr bool IsPolymorphic_V = __is_polymorphic(T);
-
-} // namespace Trait
+}
 #else // !(HAS_BUILTIN(__is_polymorphic) || defined(_MSC_VER))
 namespace Trait {
     template <typename T>

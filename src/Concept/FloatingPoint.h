@@ -8,8 +8,6 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept FloatingPoint = Trait::IsFloatingPoint_V<T>;
-
-} // namespace Concept
+}

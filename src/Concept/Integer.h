@@ -9,8 +9,6 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept Integer = SignedInteger<T> || UnsignedInteger<T>;
-
-} // namespace Concept
+}

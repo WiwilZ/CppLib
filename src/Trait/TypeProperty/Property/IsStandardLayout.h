@@ -9,12 +9,10 @@
 
 
 namespace Trait {
-
     template <Concept::CompleteVoidOrUnboundedArray T>
     constexpr bool IsStandardLayout_V = __is_standard_layout(T);
 
 
     template <Concept::CompleteVoidOrUnboundedArray T>
     struct IsStandardLayout : BoolConstant<IsStandardLayout_V<T>> {};
-
-} // namespace Trait
+}

@@ -10,18 +10,16 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsScopedEnum_V = requires {
-        requires IsEnum_V<T>;
-        sizeof(T);
-        requires !requires(void f(int), T v) { f(v); };
+            requires IsEnum_V<T>;
+            sizeof(T);
+            requires !requires(void f(int), T v) { f(v); };
     };
 
 
     template <typename T>
     struct IsScopedEnum : BoolConstant<IsScopedEnum_V<T>> {};
-
-} // namespace Trait
+}
 
 

@@ -8,13 +8,11 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsUnion_V = __is_union(T);
 
 
     template <typename T>
     struct IsUnion : BoolConstant<IsUnion_V<T>> {};
-
-} // namespace Trait
+}
 

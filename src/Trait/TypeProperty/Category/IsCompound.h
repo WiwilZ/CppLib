@@ -9,26 +9,18 @@
 
 
 #if HAS_BUILTIN(__is_compound)
-
 namespace Trait {
-
     template <typename T>
     constexpr bool IsCompound_V = __is_compound(T);
-
-} // namespace Trait
-
+}
 #else // !HAS_BUILTIN(__is_compound)
-
 #include "IsFundamental.h"
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsCompound_V = !IsFundamental_V<T>;
-
-} // namespace Trait
-
+}
 #endif
 
 

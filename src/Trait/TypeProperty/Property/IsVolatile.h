@@ -10,11 +10,9 @@
 
 #if HAS_BUILTIN(__is_volatile)
 namespace Trait {
-
     template <typename T>
     constexpr bool IsVolatile_V = __is_volatile(T);
-
-} // namespace Trait
+}
 #else // !HAS_BUILTIN(__is_volatile)
 namespace Trait {
     template <typename T>

@@ -10,7 +10,6 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsArray_V = false;
 
@@ -23,6 +22,5 @@ namespace Trait {
 
     template <typename T>
     struct IsArray : BoolConstant<IsArray_V<T>> {};
-
-} // namespace Trait
+}
 

@@ -10,12 +10,10 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsNothrowCopyConstructible_V = IsNothrowConstructible_V<T, AddLValueReference_T<const T>>;
 
 
     template <typename T>
     struct IsNothrowCopyConstructible : BoolConstant<IsNothrowCopyConstructible_V<T>> {};
-
-} // namespace Trait
+}

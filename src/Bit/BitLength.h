@@ -20,7 +20,7 @@
 
 
 
-#if defined(_MSC_VER) && !defined(__clang__) && !defined(__CUDACC__) && !defined(__INTEL_COMPILER)
+#if defined(_MSC_VER) && !defined(__clang__)
 #   if defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)
 #define USE_X86_INTRINSICS
 #       ifndef __AVX2__

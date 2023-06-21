@@ -10,7 +10,6 @@
 
 
 namespace Trait {
-
     template <typename T, unsigned I = 0>
     constexpr std::size_t Extent_V = 0;
 
@@ -26,5 +25,4 @@ namespace Trait {
 
     template <typename T>
     struct Extent : SizeConstant<Extent_V<T>> {};
-
-} // namespace Trait
+}

@@ -9,10 +9,8 @@
 
 
 namespace Trait {
-
     template <typename T>
     AddRValueReference_T<T> DeclVal() noexcept {
         static_assert(AlwaysFalse<T>, "DeclVal not allowed in an evaluated context");
     }
-
-} // namespace Trait
+}

@@ -8,7 +8,6 @@
 
 
 namespace Trait {
-
     template <typename T, T Val>
     struct Constant {
         using Type = Constant;
@@ -30,6 +29,5 @@ namespace Trait {
 
     using TrueType = BoolConstant<true>;
     using FalseType = BoolConstant<false>;
-
-} // namespace Trait
+}
 

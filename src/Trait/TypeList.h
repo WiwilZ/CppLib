@@ -8,11 +8,9 @@
 
 
 namespace Trait {
-
     template <typename... Ts>
     struct TypeList {
         static constexpr std::size_t Length = sizeof...(Ts);
     };
-
-} // namespace Trait
+}
 

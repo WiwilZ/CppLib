@@ -40,7 +40,7 @@
 
 
 /* GCC */
-#if defined(__GNUC__)
+#ifdef __GNUC__
 #   define COMPILER_COMPATIBLE_GCC 1
 #   ifndef __clang__
 #       define COMPILER_GCC 1
@@ -50,9 +50,10 @@
 
 
 /* MSVC */
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #   define COMPILER_COMPATIBLE_MSVC 1
 #   define MSVC_VERSION _MSC_FULL_VER
+#   include <sal.h>
 #   ifndef __clang__
 #       define COMPILER_MSVC 1
 #   endif
@@ -67,7 +68,7 @@
 
 
 /* mingw-w64 GCC */
-#if defined(__MINGW32__) && defined(__MINGW64__)
+#ifdef __MINGW64__
 #   define COMPILER_MINGW64 1
 #endif
 
@@ -124,7 +125,7 @@
 
 
 /* ALWAYS_INLINE */
-#if defined(DEBUG) || defined(_DEBUG)
+#if defined(DEBUG) || defined(_DEBUG) || !(defined(NDEBUG) || defined(_NDEBUG))
 #   define ALWAYS_INLINE
 #elif defined(__GNUC__) && (defined(__clang__) || ASAN_ENABLED)
 #   define ALWAYS_INLINE inline __attribute__((__always_inline__))
@@ -156,6 +157,8 @@
 /* RETURNS_NONNULL */
 #ifdef __GNUC__
 #   define RETURNS_NONNULL __attribute__((returns_nonnull))
+#elif defined(_MSC_VER)
+#   define RETURNS_NONNULL _Ret_notnull_
 #else
 #   define RETURNS_NONNULL
 #endif
@@ -167,8 +170,4 @@
 #else
 #   define PURE_FUNCTION
 #endif
-
-
-
-
 

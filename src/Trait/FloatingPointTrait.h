@@ -9,7 +9,6 @@
 
 
 namespace Trait {
-
     template <typename T>
     struct FloatingPointTrait;
 
@@ -71,12 +70,9 @@ namespace Trait {
 
 
 #if defined(_WIN32) || defined(__arm__) || defined(__NVPTX__) || defined(__AMDGPU__) || defined(__APPLE__) && defined(__aarch64__)
-
     template <>
     struct FloatingPointTrait<long double> : FloatingPointTrait<double> {};
-
 #else
-
     template <>
     struct FloatingPointTrait<long double> {
         static constexpr int NumBytes = sizeof(long double);
@@ -99,7 +95,5 @@ namespace Trait {
         static constexpr long double SignalingNaN = __builtin_nansl("");
         static constexpr long double DenormMin = __LDBL_DENORM_MIN__;
     };
-
 #endif
-
-} // namespace Trait
+}

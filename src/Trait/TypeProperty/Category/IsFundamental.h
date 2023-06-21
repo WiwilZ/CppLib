@@ -9,34 +9,24 @@
 
 
 #if HAS_BUILTIN(__is_fundamental)
-
 namespace Trait {
-
     template <typename T>
     constexpr bool IsFundamental_V = __is_fundamental(T);
-
-} // namespace Trait
-
+}
 #else // !HAS_BUILTIN(__is_fundamental)
-
 #include "Fundamental/IsArithmetic.h"
 #include "Fundamental/IsVoid.h"
 #include "Fundamental/IsNullPointer.h"
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsFundamental_V = IsArithmetic_V<T> || IsVoid_V<T> || IsNullPointer_V<T>;
-
-} // namespace Trait
-
+}
 #endif
 
 
 namespace Trait {
-
     template <typename T>
     struct IsFundamental : BoolConstant<IsFundamental_V<T>> {};
-
-} // namespace Trait
+}

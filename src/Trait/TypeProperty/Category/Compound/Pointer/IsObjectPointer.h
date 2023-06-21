@@ -10,17 +10,13 @@
 
 
 namespace Trait {
-
     namespace Detail {
-
         template <typename T>
         constexpr bool IsObjectPointer_V = false;
 
         template <typename T>
         constexpr bool IsObjectPointer_V<T*> = !IsFunction_V<T>;
-
-    } // namespace Detail
-
+    }
 
     template <typename T>
     constexpr bool IsObjectPointer_V = Detail::IsObjectPointer_V<RemoveCV_T<T>>;
@@ -28,6 +24,5 @@ namespace Trait {
 
     template <typename T>
     struct IsObjectPointer : BoolConstant<IsObjectPointer_V<T>> {};
-
-} // namespace Trait
+}
 

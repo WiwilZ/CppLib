@@ -8,9 +8,7 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept Enum = Trait::IsEnum_V<T>;
-
-} // namespace Concept
+}
 

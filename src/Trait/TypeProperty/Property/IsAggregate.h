@@ -8,12 +8,10 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsAggregate_V = __is_aggregate(T);
 
 
     template <typename T>
     struct IsAggregate : BoolConstant<IsAggregate_V<T>> {};
-
-} // end namespace Trait
+}

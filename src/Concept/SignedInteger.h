@@ -8,8 +8,6 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept SignedInteger = Trait::IsSignedInteger_V<T>;
-
-} // namespace Concept
+}

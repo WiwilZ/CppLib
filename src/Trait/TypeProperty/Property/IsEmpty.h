@@ -8,12 +8,10 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsEmpty_V = __is_empty(T);
 
 
     template <typename T>
     struct IsEmpty : BoolConstant<IsEmpty_V<T>> {};
-
-} // namespace Trait
+}

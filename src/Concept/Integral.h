@@ -8,8 +8,6 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept Integral = Trait::IsIntegral_V<T>;
-
-} // namespace Concept
+}

@@ -11,12 +11,10 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsTriviallyMoveAssignable_V = IsTriviallyAssignable_V<AddLValueReference_T<T>, AddRValueReference_T<T>>;
 
 
     template <typename T>
     struct IsTriviallyMoveAssignable : BoolConstant<IsTriviallyMoveAssignable_V<T>> {};
-
-} // namespace Trait
+}

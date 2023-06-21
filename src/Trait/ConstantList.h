@@ -20,18 +20,14 @@ namespace Trait {
 
 #if HAS_BUILTIN(__make_integer_seq) || defined(_MSC_VER)
 namespace Trait {
-
     template <typename T, std::size_t N>
     using MakeIntegerSequence = __make_integer_seq<ConstantList, T, N>;
-
-} // namespace Trait
+}
 #elif HAS_BUILTIN(__integer_pack)
 namespace Trait {
-
     template <typename T, std::size_t N>
     using MakeIntegerSequence = ConstantList<T, __integer_pack(N)...>;
-
-} // namespace Trait
+}
 #else // !HAS_BUILTIN(__make_integer_seq) && !HAS_BUILTIN(__integer_pack)
 namespace Trait {
     namespace Detail {
@@ -44,7 +40,6 @@ namespace Trait {
         template <typename T, T... Is>
         struct ExtendSequence<ConstantList<T, Is...>, true> : ConstantList<T, Is..., (sizeof...(Is) + Is)..., 2 * sizeof...(Is)> {};
     }
-
 
     template <typename T, std::size_t N>
     struct MakeIntegerSequence : Detail::ExtendSequence<typename MakeIntegerSequence<T, N / 2>::Type, N & 1> {};

@@ -8,9 +8,7 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept CompleteVoidOrUnboundedArray = Trait::IsCompleteVoidOrUnboundedArray_V<T>;
-
-} // namespace Concept
+}
 

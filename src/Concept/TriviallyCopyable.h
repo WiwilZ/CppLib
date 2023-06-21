@@ -8,9 +8,7 @@
 
 
 namespace Concept {
-
     template <typename T>
     concept TriviallyCopyable = Trait::IsTriviallyCopyable_V<T>;
-
-} // namespace Concept
+}
 

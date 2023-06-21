@@ -8,12 +8,11 @@
 
 
 namespace Trait {
-
     template <typename T, typename U>
     constexpr bool IsTriviallyAssignable_V = __is_trivially_assignable(T, U);
 
 
     template <typename T, typename U>
     struct IsTriviallyAssignable : BoolConstant<IsTriviallyAssignable_V<T, U>> {};
+}
 
-} // namespace Trait

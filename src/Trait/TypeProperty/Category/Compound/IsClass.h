@@ -8,13 +8,10 @@
 
 
 namespace Trait {
-
     template <typename T>
     constexpr bool IsClass_V = __is_class(T);
 
 
     template <typename T>
     struct IsClass : BoolConstant<IsClass_V<T>> {};
-
-} // namespace Trait
-
+}
