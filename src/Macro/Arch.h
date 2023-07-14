@@ -29,7 +29,7 @@
 
 
 /* PowerPC 32-bit */
-#if (defined(__ppc__) || defined(__PPC__) || defined(__PPC) || defined(__powerpc__) || defined(__powerpc) || defined(__POWERPC__) || defined(_M_PPC)) && !(defined(__ppc64__) || defined(__PPC64__)) && defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#if (defined(__ppc__) || defined(__PPC__) || defined(__PPC) || defined(__powerpc__) || defined(__powerpc) || defined(__POWERPC__) || defined(_M_PPC)) && !defined(ARCH_PPC64) && defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #   define ARCH_PPC 1
 #endif
 

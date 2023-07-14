@@ -35,7 +35,7 @@ namespace Detail {
             if (n == 0) {
                 return x;
             }
-            return (x << n) | (x >> (NumBits - n));
+            return (x >> n) | (x << (NumBits - n));
         }
     } // namespace Common
 

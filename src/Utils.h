@@ -8,6 +8,7 @@
 
 
 #if defined(_MSC_VER) && !defined(__clang__)
+
 namespace Detail {
 #pragma optimize("", off)
     inline void DoNotOptimizeImpl(const void*) noexcept {}
@@ -17,7 +18,9 @@ namespace Detail {
 __forceinline void DoNotOptimize(const auto& x) noexcept {
     Detail::DoNotOptimizeImpl(&x);
 }
+
 #else // !(defined(_MSC_VER) && !defined(__clang__))
+
 #include "Trait/TypeProperty/Property/IsTriviallyCopyable.h"
 #include "Trait/TypeProperty/Category/Compound/IsPointer.h"
 
@@ -38,4 +41,5 @@ ALWAYS_INLINE void DoNotOptimize(const Detail::InRegister auto& x) noexcept {
 ALWAYS_INLINE void DoNotOptimize(const Detail::InMemory auto& x) noexcept {
     asm volatile("" : : "m"(x) : "memory");
 }
+
 #endif
