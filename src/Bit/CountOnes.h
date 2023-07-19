@@ -183,4 +183,4 @@ namespace Bit {
 
 
 #undef USE_X86_INTRINSICS
-#undef USE_X86_64_INTRINSICS
+#undef USE_ARM_INTRINSICS

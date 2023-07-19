@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "BitCast.h"
 #include "../Concept/UnsignedInteger.h"
 #include "../Concept/Integral.h"
 #include "../Trait/MakeIntegerType.h"
@@ -15,7 +14,8 @@
 
 
 
-#if defined(_MSC_VER) && !defined(__clang__) && (defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)) && !defined(_M_CEE_PURE)
+#if defined(_MSC_VER) && !defined(__clang__) && (defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)) \
+    && !defined(_M_CEE_PURE) && !defined(__CUDACC__) && !defined(__INTEL_COMPILER)
 #define USE_X86_INTRINSICS
 #   ifndef __AVX2__
 #include <isa_availability.h>
@@ -30,7 +30,7 @@ extern "C" {
     unsigned int _tzcnt_u32(unsigned int);
     unsigned __int64 _tzcnt_u64(unsigned __int64);
 }
-#endif // defined(_MSC_VER) && !defined(__clang__) && (defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)) && !defined(_M_CEE_PURE)
+#endif
 
 
 

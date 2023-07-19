@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "BitCast.h"
 #include "../Concept/TriviallyCopyable.h"
 #include "../Trait/MakeIntegerType.h"
 #include "../Macro.h"
@@ -13,7 +12,7 @@
 
 
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
 extern "C" {
     unsigned short _byteswap_ushort(unsigned short);
     unsigned long _byteswap_ulong(unsigned long);
@@ -62,7 +61,7 @@ namespace Detail {
 #if HAS_BUILTIN(__builtin_bswap16)
         return __builtin_bswap16(x);
 #else // !HAS_BUILTIN(__builtin_bswap16)
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return _byteswap_ushort(x);
         }
@@ -75,7 +74,7 @@ namespace Detail {
 #if HAS_BUILTIN(__builtin_bswap32)
         return __builtin_bswap32(x);
 #else // !HAS_BUILTIN(__builtin_bswap32)
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return _byteswap_ulong(x);
         }
@@ -88,7 +87,7 @@ namespace Detail {
 #if HAS_BUILTIN(__builtin_bswap64)
         return __builtin_bswap64(x);
 #else // !HAS_BUILTIN(__builtin_bswap64)
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return _byteswap_uint64(x);
         }
@@ -118,7 +117,7 @@ namespace Bit {
         if constexpr (sizeof(T) == 1) {
             return x;
         } else {
-            return Bit::BitCast<T>(Detail::ByteSwap(Bit::BitCast<Trait::MakeUInt_T<sizeof(T)>>(x)));
+            return __builtin_bit_cast(T, Detail::ByteSwap(__builtin_bit_cast(Trait::MakeUInt_T<sizeof(T)>, x)));
         }
     }
 }

@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "BitCast.h"
 #include "../Concept/TriviallyCopyable.h"
 #include "../Trait/MakeIntegerType.h"
 #include "../Macro.h"
@@ -13,12 +12,13 @@
 
 
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
 extern "C" {
     unsigned long _byteswap_ulong(unsigned long);
     unsigned __int64 _byteswap_uint64(unsigned __int64);
 }
-#elif defined(__SIZEOF_INT128__) && defined(__SSE2__) && defined(__SSSE3__)
+#elif defined(__SIZEOF_INT128__) && defined(__SSSE3__)
+#include <emmintrin.h>
 #include <tmmintrin.h>
 #endif
 
@@ -147,7 +147,7 @@ namespace Detail {
 #elif HAS_BUILTIN(__builtin_bswap32)
         return BitReverseAfterByteSwap(static_cast<uint32_t>(__builtin_bswap32(x)));
 #else // !HAS_BUILTIN(__builtin_bitreverse32) && !HAS_BUILTIN(__builtin_bswap32)
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return BitReverseAfterByteSwap(static_cast<uint32_t>(_byteswap_ulong(x)));
         }
@@ -162,7 +162,7 @@ namespace Detail {
 #elif HAS_BUILTIN(__builtin_bswap64)
         return BitReverseAfterByteSwap(static_cast<uint64_t>(__builtin_bswap64(x)));
 #else // !HAS_BUILTIN(__builtin_bitreverse64) && !HAS_BUILTIN(__builtin_bswap64)
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return BitReverseAfterByteSwap(static_cast<uint64_t>(_byteswap_uint64(x)));
         }
@@ -180,16 +180,15 @@ namespace Detail {
 #   elif HAS_BUILTIN(__builtin_bswap64)
         return BitReverseAfterByteSwap((__uint128_t{__builtin_bswap64(x)} << 64) | __builtin_bswap64(x >> 64));
 #   else // !HAS_BUILTIN(__builtin_bitreverse64) && !HAS_BUILTIN(__builtin_bswap128) && !HAS_BUILTIN(__builtin_bswap64)
-#       if defined(__SSE2__) && defined(__SSSE3__)
+#       ifdef __SSSE3__
         if (!__builtin_is_constant_evaluated()) {
-            __m128i r = Bit::BitCast<__m128i>(x);
-            static const __m128i c0 = _mm_set1_epi8(0x0f);
-            static const __m128i c1 = _mm_setr_epi8(0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0);
-            static const __m128i c2 = _mm_setr_epi8(0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e, 0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f);
-            __m128i low = _mm_shuffle_epi8(c1, _mm_and_si128(c0, r));
-            __m128i high = _mm_shuffle_epi8(c2, _mm_srli_epi32(_mm_andnot_si128(c0, r), 4));
-            r = _mm_or_si128(low, high);
-            return Bit::BitCast<__uint128_t>(r);
+            const __m128i r = __builtin_bit_cast(__m128i, x);
+            const __m128i c0 = _mm_set1_epi8(0x0f);
+            const __m128i c1 = _mm_setr_epi8(0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0);
+            const __m128i c2 = _mm_setr_epi8(0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e, 0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f);
+            const __m128i low = _mm_shuffle_epi8(c1, _mm_and_si128(c0, r));
+            const __m128i high = _mm_shuffle_epi8(c2, _mm_srli_epi32(_mm_andnot_si128(c0, r), 4));
+            return __builtin_bit_cast(__uint128_t, _mm_or_si128(low, high));
         }
 #       endif
         return Common::BitReverse(x);
@@ -203,7 +202,7 @@ namespace Detail {
 namespace Bit {
     template <Concept::TriviallyCopyable T>
     [[nodiscard]] constexpr T BitReverse(T x) noexcept {
-        return Bit::BitCast<T>(Detail::BitReverse(Bit::BitCast<Trait::MakeUInt_T<sizeof(T)>>(x)));
+        return __builtin_bit_cast(T, Detail::BitReverse(__builtin_bit_cast(Trait::MakeUInt_T<sizeof(T)>, x)));
     }
 }
 

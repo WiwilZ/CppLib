@@ -4,19 +4,12 @@
 
 #pragma once
 
-#include "BitCast.h"
 #include "../Concept/UnsignedInteger.h"
 #include "../Concept/Integral.h"
 #include "../Trait/MakeIntegerType.h"
 #include "../Macro.h"
 
 #include <cstdint>
-
-
-
-#ifdef __AVX512F__
-#include <immintrin.h>
-#endif
 
 
 
@@ -47,6 +40,13 @@ extern "C" {
 
 
 
+#ifdef __AVX512F__
+#include <xmmintrin.h>
+#include <immintrin.h>
+#endif
+
+
+
 namespace Detail {
     namespace Common {
         static constexpr uint8_t BitLengthTable[256] {
@@ -73,18 +73,18 @@ namespace Detail {
         }
 
         [[nodiscard]] constexpr int BitLength(uint16_t x) noexcept {
-            return (Bit::BitCast<uint32_t>(static_cast<float>(x)) >> 23) - 0x7f + 1;
+            return (__builtin_bit_cast(uint32_t, static_cast<float>(x)) >> 23) - 0x7f + 1;
         }
 
         [[nodiscard]] constexpr int BitLength(uint32_t x) noexcept {
-            return (Bit::BitCast<uint64_t>(static_cast<double>(x)) >> 52) - 0x3ff + 1;
+            return (__builtin_bit_cast(uint64_t, static_cast<double>(x)) >> 52) - 0x3ff + 1;
         }
 
         [[nodiscard]] constexpr int BitLength(uint64_t x) noexcept {
 #ifdef __AVX512F__
             if (!__builtin_is_constant_evaluated()) {
-                const float v = _mm_cvtss_f32(_mm_cvt_roundu64_ss(__m128{}, x, _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC));
-                return (Bit::BitCast<uint32_t>(v) >> 23) - 0x7f + 1;
+                const float v = _mm_cvtss_f32(_mm_cvt_roundu64_ss(_mm_undefined_ps(), x, _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC));
+                return (__builtin_bit_cast(uint32_t, v) >> 23) - 0x7f + 1;
             }
 #endif
             const uint32_t high = x >> 32;
@@ -267,5 +267,5 @@ namespace Bit {
 
 
 #undef USE_X86_INTRINSICS
-#undef USE_X86_64_INTRINSICS
+#undef USE_ARM_INTRINSICS
 

@@ -88,7 +88,7 @@
 #endif
 
 #if ASAN_ENABLED
-#   define SUPPRESS_ASAN __attribute__((no_sanitize_address))
+#   define SUPPRESS_ASAN [[gnu::no_sanitize_address]]
 #else
 #   define SUPPRESS_ASAN
 #endif
@@ -102,7 +102,7 @@
 #endif
 
 #if TSAN_ENABLED
-#define SUPPRESS_TSAN __attribute__((no_sanitize_thread))
+#define SUPPRESS_TSAN [[gnu::no_sanitize_thread]]
 #else
 #define SUPPRESS_TSAN
 #endif
@@ -128,9 +128,9 @@
 #if defined(DEBUG) || defined(_DEBUG) || !(defined(NDEBUG) || defined(_NDEBUG))
 #   define ALWAYS_INLINE
 #elif defined(__GNUC__) && (defined(__clang__) || ASAN_ENABLED)
-#   define ALWAYS_INLINE inline __attribute__((__always_inline__))
+#   define ALWAYS_INLINE inline [[gnu::always_inline]]
 #elif defined(_MSC_VER)
-#   define ALWAYS_INLINE __forceinline
+#   define ALWAYS_INLINE [[msvc::forceinline]]
 #else
 #   define ALWAYS_INLINE inline
 #endif
@@ -138,9 +138,9 @@
 
 /* NEVER_INLINE */
 #ifdef __GNUC__
-#   define NEVER_INLINE __attribute__((__noinline__))
+#   define NEVER_INLINE [[gnu::noinline]]
 #elif defined(_MSC_VER)
-#   define NEVER_INLINE __declspec(noinline)
+#   define NEVER_INLINE [[msvc::noinline]]
 #else
 #   define NEVER_INLINE
 #endif
@@ -148,7 +148,7 @@
 
 /* NOT_TAIL_CALLED */
 #if HAS_ATTRIBUTE(not_tail_called)
-#   define NOT_TAIL_CALLED __attribute__((not_tail_called))
+#   define NOT_TAIL_CALLED [[gnu::not_tail_called]]
 #else
 #   define NOT_TAIL_CALLED
 #endif
@@ -156,7 +156,7 @@
 
 /* RETURNS_NONNULL */
 #ifdef __GNUC__
-#   define RETURNS_NONNULL __attribute__((returns_nonnull))
+#   define RETURNS_NONNULL [[gnu::returns_nonnull]]
 #elif defined(_MSC_VER)
 #   define RETURNS_NONNULL _Ret_notnull_
 #else
@@ -166,8 +166,15 @@
 
 /* PURE_FUNCTION */
 #ifdef __GNUC__
-#   define PURE_FUNCTION __attribute__((__pure__))
+#   define PURE_FUNCTION [[gnu::pure]]
 #else
 #   define PURE_FUNCTION
 #endif
 
+
+/* FLATTEN_FUNCTION */
+#ifdef __GNUC__
+#   define FLATTEN_FUNCTION [[gnu::flatten]]
+#else
+#   define FLATTEN_FUNCTION
+#endif

@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "BitCast.h"
 #include "../Concept/UnsignedInteger.h"
 #include "../Concept/Integral.h"
 #include "../Trait/MakeIntegerType.h"
@@ -45,7 +44,7 @@ namespace Detail {
 #if HAS_BUILTIN(__builtin_rotateright8)
         return __builtin_rotateright8(x, n);
 #else // !HAS_BUILTIN(__builtin_rotateright8)
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return _rotr8(x, n);
         }
@@ -58,7 +57,7 @@ namespace Detail {
 #if HAS_BUILTIN(__builtin_rotateright16)
         return __builtin_rotateright16(x, n);
 #else // !HAS_BUILTIN(__builtin_rotateright16)
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return _rotr16(x, n);
         }
@@ -71,7 +70,7 @@ namespace Detail {
 #if HAS_BUILTIN(__builtin_rotateright32)
         return __builtin_rotateright32(x, n);
 #else // !HAS_BUILTIN(__builtin_rotateright32)   
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return _rotr(x, n);
         }
@@ -84,7 +83,7 @@ namespace Detail {
 #if HAS_BUILTIN(__builtin_rotateright64)
         return __builtin_rotateright64(x, n);
 #else // !HAS_BUILTIN(__builtin_rotateright64)
-#   ifdef _MSC_VER
+#   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
             return _rotr64(x, n);
         }
