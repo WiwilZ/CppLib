@@ -10,9 +10,7 @@
 
 
 namespace traits {
-
-    namespace Detail {
-
+    namespace detail {
         template <typename T>
         struct ApplyCV {
             template <typename U>
@@ -36,19 +34,16 @@ namespace traits {
             template <typename U>
             using Apply = ApplyReference_T<U, const volatile RemoveCVRef_T<U>>;
         };
-
-    }  // namespace Detail
+    }
 
 
     template <typename From, typename To>
-    using ApplyCV_T = typename Detail::ApplyCV<RemoveReference_T<From>>::template Apply<To>;
+    using ApplyCV_T = typename detail::ApplyCV<RemoveReference_T<From>>::template Apply<To>;
 
 
     template <typename From, typename To>
     struct ApplyCV {
         using Type = ApplyCV_T<From, To>;
     };
-
-} // namespace traits
-
+}
 

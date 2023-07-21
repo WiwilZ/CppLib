@@ -15,7 +15,6 @@
 
 
 namespace traits {
-
     template <typename... T>
     struct CommonType {};
 
@@ -27,8 +26,7 @@ namespace traits {
     using CommonType_T = typename CommonType<T...>::Type;
 
 
-    namespace Detail {
-
+    namespace detail {
         template <typename T1, typename T2>
         using CondResult_T = decltype(false ? traits::DeclVal<T1>() : traits::DeclVal<T2>());
 
@@ -49,30 +47,26 @@ namespace traits {
         struct DoubleCommonType<T1, T2, Void_T<CondResult_T<Decay_T<T1>, Decay_T<T2>>>>
                 : DecayedCondResult<Decay_T<T1>, Decay_T<T2>> {
         };
-
-    } // namespace Detail
+    }
 
 
     template <typename T1, typename T2>
     struct CommonType<T1, T2> : Conditional<IsSame_V<T1, Decay_T<T1>> && IsSame_V<T2, Decay_T<T2>>,
-            typename Detail::DoubleCommonType<T1, T2>::Type,
+            typename detail::DoubleCommonType<T1, T2>::Type,
             CommonType_T<Decay_T<T1>, Decay_T<T2>>> {};
 
 
-    namespace Detail {
-
+    namespace detail {
         template <typename AlwaysVoid, typename T1, typename T2, typename... R>
         struct MultiCommonType {};
 
         template <typename T1, typename T2, typename... R>
         struct MultiCommonType<Void_T<CommonType_T<T1, T2>>, T1, T2, R...> : CommonType<CommonType_T<T1, T2>, R...> {};
-
-    } // namespace Detail
+    }
 
 
     template <typename T1, typename T2, typename... R>
-    struct CommonType<T1, T2, R...> : Detail::MultiCommonType<void, T1, T2, R...> {};
-
-} // namespace traits
+    struct CommonType<T1, T2, R...> : detail::MultiCommonType<void, T1, T2, R...> {};
+}
 
 

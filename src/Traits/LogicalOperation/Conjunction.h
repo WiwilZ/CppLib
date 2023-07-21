@@ -8,13 +8,11 @@
 
 
 namespace traits {
-
     template <typename... Ts>
     constexpr bool Conjunction_V = (... && Ts::Value);
 
 
     template <typename... Ts>
     struct Conjunction : BoolConstant<Conjunction_V<Ts...>> {};
-
-} // namespace traits
+}
 

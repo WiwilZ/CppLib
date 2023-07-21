@@ -8,8 +8,14 @@
 
 
 namespace traits {
+    namespace detail {
+        template <typename>
+        constexpr bool AlwaysFalse_V = false;
+    }
+
+
     template <typename T>
     AddRValueReference_T<T> DeclVal() noexcept {
-        static_assert(false, "DeclVal not allowed in an evaluated context");
+        static_assert(detail::AlwaysFalse_V<T>, "DeclVal not allowed in an evaluated context");
     }
 }

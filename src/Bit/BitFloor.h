@@ -8,7 +8,6 @@
 #include "../Concepts/Integral.h"
 
 
-
 template <concepts::Integral T>
 [[nodiscard]] constexpr T BitFloor(T x) noexcept {
     if (x <= 0) {

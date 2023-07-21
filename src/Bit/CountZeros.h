@@ -6,10 +6,10 @@
 
 #include "CountOnes.h"
 #include "../Concepts/Integral.h"
-
+#include "../ArithmeticType.h"
 
 
 template <concepts::Integral T>
-[[nodiscard]] constexpr int CountZeros(T x) noexcept {
+[[nodiscard]] constexpr usize CountZeros(T x) noexcept {
     return ::CountOnes(~x);
 }

@@ -6,7 +6,6 @@
 
 
 namespace traits {
-
     template <typename T>
     struct RemoveVolatile {
         using Type = T;
@@ -20,6 +19,5 @@ namespace traits {
 
     template <typename T>
     using RemoveVolatile_T = typename RemoveVolatile<T>::Type;
-
-} // namespace traits
+}
 

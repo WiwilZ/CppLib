@@ -7,7 +7,6 @@
 #include "../Concepts/Integral.h"
 
 
-
 template <concepts::Integral T>
 [[nodiscard]] constexpr bool IsPowerOfTwo(T x) noexcept {
     return x > 0 && (x & (x - 1)) == 0;

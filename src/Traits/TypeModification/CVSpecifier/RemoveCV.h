@@ -6,7 +6,6 @@
 
 
 namespace traits {
-
     template <typename T>
     struct RemoveCV {
         using Type = T;
@@ -30,6 +29,5 @@ namespace traits {
 
     template <typename T>
     using RemoveCV_T = typename RemoveCV<T>::Type;
-
-} // namespace traits
+}
 

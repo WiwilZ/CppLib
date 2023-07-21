@@ -8,7 +8,6 @@
 
 
 namespace traits {
-
     template <typename T>
     struct RemoveAllExtents {
         using Type = T;
@@ -28,6 +27,5 @@ namespace traits {
     struct RemoveAllExtents<T[]> {
         using Type = RemoveAllExtents_T<T>;
     };
-
-} // namespace traits
+}
 

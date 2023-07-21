@@ -24,7 +24,7 @@ namespace traits {
 
 
 namespace traits {
-    namespace Detail {
+    namespace detail {
         template <typename T>
         constexpr bool IsClassOrUnion_V = false;
 
@@ -33,7 +33,7 @@ namespace traits {
     }
 
     template <typename T>
-    constexpr bool IsEnum_V = !(IsFundamental_V<T> || IsArray_V<T> || IsFunction_V<T> || IsPointer_V<T> || IsReference_V<T> || IsMemberPointer_V<T> || Detail::IsClassOrUnion_V<RemoveCV_T<T>>);
+    constexpr bool IsEnum_V = !(IsFundamental_V<T> || IsArray_V<T> || IsFunction_V<T> || IsPointer_V<T> || IsReference_V<T> || IsMemberPointer_V<T> || detail::IsClassOrUnion_V<RemoveCV_T<T>>);
 }
 #endif
 

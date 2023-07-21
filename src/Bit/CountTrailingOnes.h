@@ -6,10 +6,10 @@
 
 #include "CountTrailingZeros.h"
 #include "../Concepts/Integral.h"
-
+#include "../ArithmeticType.h"
 
 
 template <concepts::Integral T>
-[[nodiscard]] constexpr int CountTrailingOnes(T x) noexcept {
+[[nodiscard]] constexpr usize CountTrailingOnes(T x) noexcept {
     return ::CountTrailingZeros(~x);
 }

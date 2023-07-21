@@ -6,9 +6,7 @@
 
 
 namespace traits {
-
     template <typename...>
     using Void_T = void;
-
-} // namespace traits
+}
 

@@ -4,53 +4,52 @@
 
 #pragma once
 
-
-#include <cstdint>
+#include "../ArithmeticType.h"
 
 
 namespace traits {
-    namespace Detail {
-        template <int NumBytes>
+    namespace detail {
+        template <usize NumBytes>
         struct MakeIntegerType;
 
         template <>
         struct MakeIntegerType<1> {
-            using SignedType = int8_t;
-            using UnsignedType = uint8_t;
+            using SignedType = i8;
+            using UnsignedType = u8;
         };
 
         template <>
         struct MakeIntegerType<2> {
-            using SignedType = int16_t;
-            using UnsignedType = uint16_t;
+            using SignedType = i16;
+            using UnsignedType = u16;
         };
 
         template <>
         struct MakeIntegerType<4> {
-            using SignedType = int32_t;
-            using UnsignedType = uint32_t;
+            using SignedType = i32;
+            using UnsignedType = u32;
         };
 
         template <>
         struct MakeIntegerType<8> {
-            using SignedType = int64_t;
-            using UnsignedType = uint64_t;
+            using SignedType = i64;
+            using UnsignedType = u64;
         };
 
-#ifdef __SIZEOF_INT128__
+#if HAS_INT128
         template <>
         struct MakeIntegerType<16> {
-            using SignedType = __int128_t;
-            using UnsignedType = __uint128_t;
+            using SignedType = i128;
+            using UnsignedType = u128;
         };
 #endif
     }
 
 
-    template <int NumBytes>
-    using MakeInt_T = typename Detail::MakeIntegerType<NumBytes>::SignedType;
+    template <usize NumBytes>
+    using MakeInt_T = typename detail::MakeIntegerType<NumBytes>::SignedType;
 
-    template <int NumBytes>
-    using MakeUInt_T = typename Detail::MakeIntegerType<NumBytes>::UnsignedType;
+    template <usize NumBytes>
+    using MakeUInt_T = typename detail::MakeIntegerType<NumBytes>::UnsignedType;
 }
 

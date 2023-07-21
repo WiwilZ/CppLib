@@ -8,13 +8,11 @@
 
 
 namespace traits {
-
     template <typename T>
     constexpr bool Negation_V = !T::Value;
 
 
     template <typename T>
     struct Negation : BoolConstant<!T::Value> {};
-
-} // namespace traits
+}
 

@@ -9,13 +9,12 @@
 #include "../Traits/IntegralTrait.h"
 
 
-
 template <concepts::Integral T>
 [[nodiscard]] constexpr T BitCeil(T x) noexcept {
     if (x <= 1) {
         return 1;
     }
-    const int shift = BitLength(x - 1);
+    const auto shift = BitLength(x - 1);
     if (shift >= traits::IntegralTrait<T>::NumDigits) {
         return 0;
     }

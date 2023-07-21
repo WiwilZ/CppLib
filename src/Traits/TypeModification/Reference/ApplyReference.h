@@ -11,9 +11,7 @@
 
 
 namespace traits {
-
-    namespace Detail {
-
+    namespace detail {
         template <typename T>
         struct ApplyReference {
             template <typename U>
@@ -31,20 +29,18 @@ namespace traits {
             template <typename U>
             using Apply = MakeRValueReference_T<U>;
         };
-
-    } // namespace Detail
+    }
 
 
     template <typename From, typename To>
-    using ApplyReference_T = typename Detail::ApplyReference<From>::template Apply<To>;
+    using ApplyReference_T = typename detail::ApplyReference<From>::template Apply<To>;
 
 
     template <typename From, typename To>
     struct ApplyReference {
         using Type = ApplyReference_T<From, To>;
     };
-
-} // namespace traits
+}
 
 
 

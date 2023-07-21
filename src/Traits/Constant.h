@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <cstddef>
+#include "../ArithmeticType.h"
 
 
 namespace traits {
@@ -20,8 +20,8 @@ namespace traits {
     };
 
 
-    template <std::size_t Val>
-    using SizeConstant = Constant<std::size_t, Val>;
+    template <usize Val>
+    using SizeConstant = Constant<usize, Val>;
 
     template <bool Val>
     using BoolConstant = Constant<bool, Val>;

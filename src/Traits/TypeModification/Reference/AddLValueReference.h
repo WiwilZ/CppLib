@@ -8,9 +8,7 @@
 
 
 namespace traits {
-
-    namespace Detail {
-
+    namespace detail {
         template <typename T, typename = void>
         struct AddLValueReference {
             using Type = T;
@@ -20,16 +18,14 @@ namespace traits {
         struct AddLValueReference<T, Void_T<T&>> {
             using Type = T&;
         };
-
-    } // namespace Detail
+    }
 
 
     template <typename T>
-    struct AddLValueReference : Detail::AddLValueReference<T> {};
+    struct AddLValueReference : detail::AddLValueReference<T> {};
 
 
     template <typename T>
     using AddLValueReference_T = typename AddLValueReference<T>::Type;
-
-} // namespace traits
+}
 

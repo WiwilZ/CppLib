@@ -8,9 +8,7 @@
 
 
 namespace traits {
-
-    namespace Detail {
-
+    namespace detail {
         template <typename T>
         struct MakeRValueReferenceImpl {
             using Type = T&&;
@@ -28,15 +26,13 @@ namespace traits {
 
         template <typename T>
         struct MakeRValueReference<T, Void_T<T&&>> : MakeRValueReferenceImpl<T> {};
-
-    } // namespace Detail
+    }
 
 
     template <typename T>
-    struct MakeRValueReference : Detail::MakeRValueReference<T> {};
+    struct MakeRValueReference : detail::MakeRValueReference<T> {};
 
 
     template <typename T>
     using MakeRValueReference_T = typename MakeRValueReference<T>::Type;
-
-} // namespace traits
+}

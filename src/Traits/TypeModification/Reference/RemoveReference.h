@@ -6,7 +6,6 @@
 
 
 namespace traits {
-
     template <typename T>
     struct RemoveReference {
         using Type = T;
@@ -25,6 +24,5 @@ namespace traits {
 
     template <typename T>
     using RemoveReference_T = typename RemoveReference<T>::Type;
-
-} // namespace traits
+}
 

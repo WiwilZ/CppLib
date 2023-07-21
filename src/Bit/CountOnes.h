@@ -7,10 +7,8 @@
 #include "../Concepts/Integral.h"
 #include "../Concepts/UnsignedInteger.h"
 #include "../Traits/TypeModification/SignModifier/MakeUnsigned.h"
+#include "../ArithmeticType.h"
 #include "../Macro.h"
-
-#include <cstdint>
-
 
 
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -33,7 +31,7 @@ extern "C" {
 
 namespace detail {
     namespace common {
-        static constexpr uint8_t PopCountTable[256]{
+        static constexpr u8 PopCountTable[256]{
                 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
                 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
                 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
@@ -52,15 +50,15 @@ namespace detail {
                 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
         };
 
-        [[nodiscard]] constexpr int CountOnes(uint8_t x) noexcept {
+        [[nodiscard]] constexpr usize CountOnes(u8 x) noexcept {
             return PopCountTable[x];
         }
 
-        [[nodiscard]] constexpr int CountOnes(uint16_t x) noexcept {
+        [[nodiscard]] constexpr usize CountOnes(u16 x) noexcept {
             return PopCountTable[x >> 8] + PopCountTable[x & 0xFF];
         }
 
-        [[nodiscard]] constexpr int CountOnes(uint32_t x) noexcept {
+        [[nodiscard]] constexpr usize CountOnes(u32 x) noexcept {
             x -= (x >> 1) & 0x55555555;
             x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
             x = (x + (x >> 4)) & 0xF0F0F0F;
@@ -68,7 +66,7 @@ namespace detail {
             return x;
         }
 
-        [[nodiscard]] constexpr int CountOnes(uint64_t x) noexcept {
+        [[nodiscard]] constexpr usize CountOnes(u64 x) noexcept {
             x -= (x >> 1) & 0x5555555555555555;
             x = (x & 0x3333333333333333) + ((x >> 2) & 0x3333333333333333);
             x = (x + (x >> 4)) & 0x0F0F0F0F0F0F0F0F;
@@ -76,12 +74,12 @@ namespace detail {
             return x;
         }
 
-#ifdef __SIZEOF_INT128__
-        [[nodiscard]] constexpr int CountOnes(__uint128_t x) noexcept {
-            constexpr __uint128_t C0 = (__uint128_t{0x5555555555555555} << 64) | 0x5555555555555555;
-            constexpr __uint128_t C1 = (__uint128_t{0x3333333333333333} << 64) | 0x3333333333333333;
-            constexpr __uint128_t C2 = (__uint128_t{0x0F0F0F0F0F0F0F0F} << 64) | 0x0F0F0F0F0F0F0F0F;
-            constexpr __uint128_t C3 = (__uint128_t{0x0101010101010101} << 64) | 0x0101010101010101;
+#if HAS_INT128
+        [[nodiscard]] constexpr usize CountOnes(u128 x) noexcept {
+            constexpr u128 C0 = (u128{0x5555555555555555} << 64) | 0x5555555555555555;
+            constexpr u128 C1 = (u128{0x3333333333333333} << 64) | 0x3333333333333333;
+            constexpr u128 C2 = (u128{0x0F0F0F0F0F0F0F0F} << 64) | 0x0F0F0F0F0F0F0F0F;
+            constexpr u128 C3 = (u128{0x0101010101010101} << 64) | 0x0101010101010101;
             x -= (x >> 1) & C0;
             x = (x & C1) + ((x >> 2) & C1);
             x = (x + (x >> 4)) & C2;
@@ -96,7 +94,7 @@ namespace detail {
 #ifdef USE_X86_INTRINSICS
     namespace x86 {
         template <concepts::UnsignedInteger T>
-        [[nodiscard]] __forceinline int CountOnes(T x) noexcept {
+        [[nodiscard]] __forceinline usize CountOnes(T x) noexcept {
 #   ifndef __AVX2__
             if (__isa_available < __ISA_AVAILABLE_AVX2) {
                 return common::CountOnes(x);
@@ -115,7 +113,7 @@ namespace detail {
     } // namespace x86
 #elif defined(USE_ARM_INTRINSICS)
     namespace arm {
-        [[nodiscard]] __forceinline int CountOnes(uint64_t x) noexcept {
+        [[nodiscard]] __forceinline usize CountOnes(u64 x) noexcept {
             const __n64 v = neon_cnt(__uint64ToN64_v(x));
             return neon_addv8(v).n8_i8[0];
         }
@@ -126,7 +124,7 @@ namespace detail {
 
     template <concepts::UnsignedInteger T>
     requires (sizeof(T) <= 4)
-    [[nodiscard]] constexpr int CountOnes(T x) noexcept {
+    [[nodiscard]] constexpr usize CountOnes(T x) noexcept {
 #if HAS_BUILTIN(__builtin_popcount)
         return __builtin_popcount(x);
 #else // !HAS_BUILTIN(__builtin_popcount)
@@ -143,7 +141,7 @@ namespace detail {
 #endif
     }
 
-    [[nodiscard]] constexpr int CountOnes(uint64_t x) noexcept {
+    [[nodiscard]] constexpr usize CountOnes(u64 x) noexcept {
 #if HAS_BUILTIN(__builtin_popcountll)
         return __builtin_popcountll(x);
 #else // !HAS_BUILTIN(__builtin_popcountll)
@@ -160,15 +158,15 @@ namespace detail {
 #endif
     }
 
-#ifdef __SIZEOF_INT128__
-    [[nodiscard]] constexpr int CountOnes(__uint128_t x) noexcept {
+#if HAS_INT128
+    [[nodiscard]] constexpr usize CountOnes(u128 x) noexcept {
 #if HAS_BUILTIN(__builtin_popcountll)
         return __builtin_popcountll(x >> 64) + __builtin_popcountll(x);
 #else // !HAS_BUILTIN(__builtin_popcountll)
         return common::CountOnes(x);
 #endif
     }
-#endif // __SIZEOF_INT128__
+#endif
 } // namespace detail
 
 
@@ -179,7 +177,7 @@ namespace detail {
 
 
 template <concepts::Integral T>
-[[nodiscard]] constexpr int CountOnes(T x) noexcept {
+[[nodiscard]] constexpr usize CountOnes(T x) noexcept {
     return detail::CountOnes(static_cast<traits::MakeUInt_T<sizeof(T)>>(x));
 }
 

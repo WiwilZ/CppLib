@@ -6,10 +6,8 @@
 
 
 namespace traits {
-
     template <typename T>
     struct TypeIdentity {
         using Type = T;
     };
-
-} // namespace traits
+}

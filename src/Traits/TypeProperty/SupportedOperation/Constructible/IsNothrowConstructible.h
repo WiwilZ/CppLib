@@ -21,7 +21,7 @@ namespace traits {
 
 
 namespace traits {
-    namespace Detail {
+    namespace detail {
         template <bool IsConstructible_/*false*/, bool IsReference_, typename T, typename... Args>
         constexpr bool IsNothrowConstructible_V = false;
 
@@ -33,10 +33,10 @@ namespace traits {
     }
 
     template <typename T, typename... Args>
-    constexpr bool IsNothrowConstructible_V = Detail::IsNothrowConstructible_V<IsConstructible_V<T, Args...>, IsReference_V<T>, T, Args...>;
+    constexpr bool IsNothrowConstructible_V = detail::IsNothrowConstructible_V<IsConstructible_V<T, Args...>, IsReference_V<T>, T, Args...>;
 
     template <typename T, std::size_t N>
-    constexpr bool IsNothrowConstructible_V<T[N]> = Detail::IsNothrowConstructible_V<IsConstructible_V<T>, IsReference_V<T>, T>;
+    constexpr bool IsNothrowConstructible_V<T[N]> = detail::IsNothrowConstructible_V<IsConstructible_V<T>, IsReference_V<T>, T>;
 }
 #endif
 

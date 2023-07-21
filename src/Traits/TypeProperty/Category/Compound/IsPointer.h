@@ -18,7 +18,7 @@ namespace traits {
 
 
 namespace traits {
-    namespace Detail {
+    namespace detail {
         template <typename T>
         constexpr bool IsPointer_V = false;
 
@@ -27,7 +27,7 @@ namespace traits {
     }
 
     template <typename T>
-    constexpr bool IsPointer_V = Detail::IsPointer_V<RemoveCV_T<T>>;
+    constexpr bool IsPointer_V = detail::IsPointer_V<RemoveCV_T<T>>;
 }
 #endif
 

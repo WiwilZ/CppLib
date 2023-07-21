@@ -6,7 +6,6 @@
 
 
 namespace traits {
-
     template <bool Condition, typename If, typename Else>
     struct Conditional {
         using Type = If;
@@ -20,6 +19,5 @@ namespace traits {
 
     template <bool Condition, typename If, typename Else>
     using Conditional_T = typename Conditional<Condition, If, Else>::Type;
-
-} // namespace traits
+}
 

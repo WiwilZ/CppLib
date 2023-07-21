@@ -8,10 +8,8 @@
 #include "../Concepts/Integral.h"
 #include "../Traits/MakeIntegerType.h"
 #include "../Traits/IntegralTrait.h"
+#include "../ArithmeticType.h"
 #include "../Macro.h"
-
-#include <cstdint>
-
 
 
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -29,7 +27,7 @@ namespace detail {
     namespace common {
         template <concepts::UnsignedInteger T>
         [[nodiscard]] constexpr T RotateLeft(T x, unsigned n) noexcept {
-            constexpr int NumBits = traits::IntegralTrait<T>::NumBits;
+            constexpr usize NumBits = traits::IntegralTrait<T>::NumBits;
             n %= NumBits;
             if (n == 0) {
                 return x;
@@ -40,7 +38,7 @@ namespace detail {
 
 
 
-    [[nodiscard]] constexpr uint8_t RotateLeft(uint8_t x, unsigned n) noexcept {
+    [[nodiscard]] constexpr u8 RotateLeft(u8 x, unsigned n) noexcept {
 #if HAS_BUILTIN(__builtin_rotateleft8)
         return __builtin_rotateleft8(x, n);
 #else // !HAS_BUILTIN(__builtin_rotateleft8)
@@ -53,7 +51,7 @@ namespace detail {
 #endif
     }
 
-    [[nodiscard]] constexpr uint16_t RotateLeft(uint16_t x, unsigned n) noexcept {
+    [[nodiscard]] constexpr u16 RotateLeft(u16 x, unsigned n) noexcept {
 #if HAS_BUILTIN(__builtin_rotateleft16)
         return __builtin_rotateleft16(x, n);
 #else // !HAS_BUILTIN(__builtin_rotateleft16)
@@ -66,7 +64,7 @@ namespace detail {
 #endif
     }
 
-    [[nodiscard]] constexpr uint32_t RotateLeft(uint32_t x, unsigned n) noexcept {
+    [[nodiscard]] constexpr u32 RotateLeft(u32 x, unsigned n) noexcept {
 #if HAS_BUILTIN(__builtin_rotateleft32)
         return __builtin_rotateleft32(x, n);
 #else // !HAS_BUILTIN(__builtin_rotateleft32)
@@ -79,7 +77,7 @@ namespace detail {
 #endif
     }
 
-    [[nodiscard]] constexpr uint64_t RotateLeft(uint64_t x, unsigned n) noexcept {
+    [[nodiscard]] constexpr u64 RotateLeft(u64 x, unsigned n) noexcept {
 #if HAS_BUILTIN(__builtin_rotateleft64)
         return __builtin_rotateleft64(x, n);
 #else // !HAS_BUILTIN(__builtin_rotateleft64)
@@ -92,8 +90,8 @@ namespace detail {
 #endif
     }
 
-#ifdef __SIZEOF_INT128__
-    [[nodiscard]] constexpr __uint128_t RotateLeft(__uint128_t x, unsigned n) noexcept {
+#if HAS_INT128
+    [[nodiscard]] constexpr u128 RotateLeft(u128 x, unsigned n) noexcept {
         return common::RotateLeft(x, n);
     }
 #endif

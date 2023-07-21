@@ -19,13 +19,13 @@ namespace traits {
 
 
 namespace traits {
-    namespace Detail {
+    namespace detail {
         template <typename T>
         constexpr bool IsNothrowDestructible_V = noexcept(traits::DeclVal<T&>().~T());
     }
 
     template <typename T>
-    constexpr bool IsNothrowDestructible_V = IsDestructible_V<T> && Detail::IsNothrowDestructible_V<RemoveAllExtents_T<T>>;
+    constexpr bool IsNothrowDestructible_V = IsDestructible_V<T> && detail::IsNothrowDestructible_V<RemoveAllExtents_T<T>>;
 }
 #endif
 

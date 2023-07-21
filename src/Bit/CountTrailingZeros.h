@@ -8,10 +8,8 @@
 #include "../Concepts/Integral.h"
 #include "../Traits/MakeIntegerType.h"
 #include "../Traits/IntegralTrait.h"
+#include "../ArithmeticType.h"
 #include "../Macro.h"
-
-#include <cstdint>
-
 
 
 #if defined(_MSC_VER) && !defined(__clang__) && (defined(_M_IX86) || defined(_M_X64) && !defined(_M_ARM64EC)) \
@@ -36,7 +34,7 @@ extern "C" {
 
 namespace detail {
     namespace common {
-        static constexpr uint8_t TrailingZerosTable[256]{
+        static constexpr u8 TrailingZerosTable[256]{
             8, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
             4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
             5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
@@ -55,7 +53,7 @@ namespace detail {
             4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
         };
 
-        [[nodiscard]] constexpr int CountTrailingZeros(uint8_t x) noexcept {
+        [[nodiscard]] constexpr usize CountTrailingZeros(u8 x) noexcept {
             return TrailingZerosTable[x];
         }
 
@@ -93,31 +91,31 @@ namespace detail {
         struct CountTrailingZerosImpl;
 
         template <>
-        struct CountTrailingZerosImpl<uint16_t> {
-            static constexpr uint16_t deBruijn = 0x9af;
-            static constexpr uint8_t deBruijnTable[16]{
+        struct CountTrailingZerosImpl<u16> {
+            static constexpr u16 deBruijn = 0x9af;
+            static constexpr u8 deBruijnTable[16]{
                 0, 1, 2, 5, 3, 9, 6, 11,
                 15, 4, 8, 10, 14, 7, 13, 12
             };
-            static constexpr int Shift = 16 - 4;
+            static constexpr usize Shift = 16 - 4;
         };
 
         template <>
-        struct CountTrailingZerosImpl<uint32_t> {
-            static constexpr uint32_t deBruijn = 0x4653adf;
-            static constexpr uint8_t deBruijnTable[32]{
+        struct CountTrailingZerosImpl<u32> {
+            static constexpr u32 deBruijn = 0x4653adf;
+            static constexpr u8 deBruijnTable[32]{
                 0, 1, 2, 6, 3, 11, 7, 16,
                 4, 14, 12, 21, 8, 23, 17, 26,
                 31, 5, 10, 15, 13, 20, 22, 25,
                 30, 9, 19, 24, 29, 18, 28, 27
             };
-            static constexpr int Shift = 32 - 5;
+            static constexpr usize Shift = 32 - 5;
         };
 
         template <>
-        struct CountTrailingZerosImpl<uint64_t> {
-            static constexpr uint64_t deBruijn = 0x218a392cd3d5dbf;
-            static constexpr uint8_t deBruijnTable[64]{
+        struct CountTrailingZerosImpl<u64> {
+            static constexpr u64 deBruijn = 0x218a392cd3d5dbf;
+            static constexpr u8 deBruijnTable[64]{
                 0, 1, 2, 7, 3, 13, 8, 19,
                 4, 25, 14, 28, 9, 34, 20, 40,
                 5, 17, 26, 38, 15, 46, 29, 48,
@@ -127,14 +125,14 @@ namespace detail {
                 62, 11, 23, 32, 36, 44, 52, 55,
                 61, 22, 43, 51, 60, 42, 59, 58
             };
-            static constexpr int Shift = 64 - 6;
+            static constexpr usize Shift = 64 - 6;
         };
 
-#ifdef __SIZEOF_INT128__
+#if HAS_INT128
         template <>
-        struct CountTrailingZerosImpl<__uint128_t> {
-            static constexpr __uint128_t deBruijn = __uint128_t{0x106143891634793} << 64 | 0x2a5cd9d3ead7b77f;
-            static constexpr uint8_t deBruijnTable[128]{
+        struct CountTrailingZerosImpl<u128> {
+            static constexpr u128 deBruijn = u128{0x106143891634793} << 64 | 0x2a5cd9d3ead7b77f;
+            static constexpr u8 deBruijnTable[128]{
                     0, 1, 2, 8, 3, 15, 9, 22,
                     4, 29, 16, 36, 10, 43, 23, 50,
                     5, 33, 30, 57, 17, 64, 37, 71,
@@ -152,13 +150,13 @@ namespace detail {
                     125, 26, 54, 75, 87, 96, 110, 117,
                     124, 53, 95, 109, 123, 94, 122, 121
             };
-            static constexpr int Shift = 128 - 7;
+            static constexpr usize Shift = 128 - 7;
         };
-#endif // __SIZEOF_INT128__
+#endif
 
         template <concepts::UnsignedInteger T>
         requires (sizeof(T) > 1)
-        [[nodiscard]] constexpr int CountTrailingZeros(T x) noexcept {
+        [[nodiscard]] constexpr usize CountTrailingZeros(T x) noexcept {
             if (x == 0) {
                 return traits::IntegralTrait<T>::NumBits;
             }
@@ -173,7 +171,7 @@ namespace detail {
     namespace x86 {
 #   ifndef __AVX2__
         template <concepts::UnsignedInteger T>
-        [[nodiscard]] __forceinline int CountTrailingZerosByBSF(T x) noexcept {
+        [[nodiscard]] __forceinline usize CountTrailingZerosByBSF(T x) noexcept {
             unsigned long result;
             if constexpr (sizeof(T) <= 4) {
                 if (_BitScanForward(&result, x)) {
@@ -181,11 +179,11 @@ namespace detail {
                 }
             } else {
 #       ifdef _M_IX86
-                const uint32_t low = x;
+                const u32 low = x;
                 if (_BitScanForward(&result, low)) {
                     return result;
                 }
-                const uint32_t high = x >> 32;
+                const u32 high = x >> 32;
                 if (_BitScanForward(&result, high)) {
                     return result + 32;
                 }
@@ -200,7 +198,7 @@ namespace detail {
 #   endif // !defined(__AVX2__)
 
         template <concepts::UnsignedInteger T>
-        [[nodiscard]] __forceinline int CountTrailingZerosByTZCNT(T x) noexcept {
+        [[nodiscard]] __forceinline usize CountTrailingZerosByTZCNT(T x) noexcept {
             if constexpr (sizeof(T) <= 4) {
                 if (x == 0) {
                     return traits::IntegralTrait<T>::NumBits;
@@ -208,11 +206,11 @@ namespace detail {
                 return _tzcnt_u32(x);
             } else {
 #   ifdef _M_IX86
-                const uint32_t low = x;
+                const u32 low = x;
                 if (low != 0) {
                     return _tzcnt_u32(low);
                 }
-                const uint32_t high = x >> 32;
+                const u32 high = x >> 32;
                 return _tzcnt_u32(high) + 32;
 #   else  // !defined(_M_IX86)
                 return _tzcnt_u64(x);
@@ -221,7 +219,7 @@ namespace detail {
         }
 
         template <concepts::UnsignedInteger T>
-        [[nodiscard]] __forceinline int CountTrailingZeros(T x) noexcept {
+        [[nodiscard]] __forceinline usize CountTrailingZeros(T x) noexcept {
 #   ifndef __AVX2__
             if (__isa_available < __ISA_AVAILABLE_AVX2) {
                 return CountTrailingZerosByBSF(x);
@@ -236,7 +234,7 @@ namespace detail {
 
     template <concepts::UnsignedInteger T>
     requires (sizeof(T) <= 4)
-    [[nodiscard]] constexpr int CountTrailingZeros(T x) noexcept {
+    [[nodiscard]] constexpr usize CountTrailingZeros(T x) noexcept {
 #if HAS_BUILTIN(__builtin_ctz)
         if (x == 0) {
             return traits::IntegralTrait<T>::NumBits;
@@ -252,7 +250,7 @@ namespace detail {
 #endif
     }
 
-    [[nodiscard]] constexpr int CountTrailingZeros(uint64_t x) noexcept {
+    [[nodiscard]] constexpr usize CountTrailingZeros(u64 x) noexcept {
 #if HAS_BUILTIN(__builtin_ctzll)
         return __builtin_ctzll(x);
 #else // !HAS_BUILTIN(__builtin_ctzll)
@@ -265,20 +263,20 @@ namespace detail {
 #endif
     }
 
-#ifdef __SIZEOF_INT128__
-    [[nodiscard]] constexpr int CountTrailingZeros(__uint128_t x) noexcept {
+#if HAS_INT128
+    [[nodiscard]] constexpr usize CountTrailingZeros(u128 x) noexcept {
 #if HAS_BUILTIN(__builtin_ctzll)
-        const uint64_t low = x;
+        const u64 low = x;
         if (low != 0) {
             return __builtin_ctzll(low);
         }
-        const uint64_t high = x >> 64;
+        const u64 high = x >> 64;
         return __builtin_ctzll(high) + 64;
 #else
         return common::CountTrailingZeros(x);
 #endif
     }
-#endif // __SIZEOF_INT128__
+#endif 
 } // namespace detail
 
 
@@ -288,7 +286,7 @@ namespace detail {
 
 
 template <concepts::Integral T>
-[[nodiscard]] constexpr int CountTrailingZeros(T x) noexcept {
+[[nodiscard]] constexpr usize CountTrailingZeros(T x) noexcept {
     return detail::CountTrailingZeros(static_cast<traits::MakeUInt_T<sizeof(T)>>(x));
 }
 

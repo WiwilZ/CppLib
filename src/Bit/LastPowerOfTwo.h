@@ -8,7 +8,6 @@
 #include "../Concepts/Integral.h"
 
 
-
 template <concepts::Integral T>
 [[nodiscard]] constexpr T LastPowerOf2(T x) noexcept {
     if (x <= 1) {

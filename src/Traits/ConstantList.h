@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <cstddef>
+#include "../ArithmeticType.h"
 #include "../Macro.h"
 
 
@@ -13,24 +13,24 @@ namespace traits {
     struct ConstantList {
         using Type = ConstantList;
         using ElementType = T;
-        static constexpr std::size_t Length = sizeof...(Es);
+        static constexpr usize Length = sizeof...(Es);
     };
 }
 
 
 #if HAS_BUILTIN(__make_integer_seq) || defined(_MSC_VER)
 namespace traits {
-    template <typename T, std::size_t N>
+    template <typename T, usize N>
     using MakeIntegerSequence = __make_integer_seq<ConstantList, T, N>;
 }
 #elif HAS_BUILTIN(__integer_pack)
 namespace traits {
-    template <typename T, std::size_t N>
+    template <typename T, usize N>
     using MakeIntegerSequence = ConstantList<T, __integer_pack(N)...>;
 }
 #else // !HAS_BUILTIN(__make_integer_seq) && !HAS_BUILTIN(__integer_pack)
 namespace traits {
-    namespace Detail {
+    namespace detail {
         template <typename Seq, bool IsOdd>
         struct ExtendSequence;
 
@@ -41,8 +41,8 @@ namespace traits {
         struct ExtendSequence<ConstantList<T, Is...>, true> : ConstantList<T, Is..., (sizeof...(Is) + Is)..., 2 * sizeof...(Is)> {};
     }
 
-    template <typename T, std::size_t N>
-    struct MakeIntegerSequence : Detail::ExtendSequence<typename MakeIntegerSequence<T, N / 2>::Type, N & 1> {};
+    template <typename T, usize N>
+    struct MakeIntegerSequence : detail::ExtendSequence<typename MakeIntegerSequence<T, N / 2>::Type, N & 1> {};
 
     template <typename T>
     struct MakeIntegerSequence<T, 0> : ConstantList<T> {};
@@ -54,8 +54,8 @@ namespace traits {
 
 
 namespace traits {
-    template <std::size_t N>
-    using MakeIndexSequence = MakeIntegerSequence<std::size_t, N>;
+    template <usize N>
+    using MakeIndexSequence = MakeIntegerSequence<usize, N>;
 
 
     template <typename... Ts>

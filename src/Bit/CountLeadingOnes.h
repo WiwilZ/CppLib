@@ -6,10 +6,10 @@
 
 #include "CountLeadingZeros.h"
 #include "../Concepts/Integral.h"
-
+#include "../ArithmeticType.h"
 
 
 template <concepts::Integral T>
-[[nodiscard]] constexpr int CountLeadingOnes(T x) noexcept {
+[[nodiscard]] constexpr usize CountLeadingOnes(T x) noexcept {
     return ::CountLeadingZeros(~x);
 }

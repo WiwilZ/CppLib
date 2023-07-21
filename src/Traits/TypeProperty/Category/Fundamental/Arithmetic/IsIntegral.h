@@ -26,9 +26,9 @@ namespace traits {
 namespace traits {
     template <typename T>
     constexpr bool IsIntegral_V = requires(T t, T* p, void f(T)) {
-        reinterpret_cast<T>(t); // 排除类类型
-        f(0); // 排除枚举类型
-        p + t; // 排除所有尚未排除的类型
+        reinterpret_cast<T>(t); // exclude class-like types
+        f(0); // exclude enum types
+        p + t; // exclude other types
     };
 }
 #endif

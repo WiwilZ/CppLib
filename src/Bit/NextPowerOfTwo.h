@@ -9,13 +9,12 @@
 #include "../Traits/IntegralTrait.h"
 
 
-
 template <concepts::Integral T>
 [[nodiscard]] constexpr T NextPowerOf2(T x) noexcept {
     if (x == 0) {
         return 1;
     }
-    const int shift = BitLength(x);
+    const auto shift = BitLength(x);
     if (shift >= traits::IntegralTrait<T>::NumDigits) {
         return 0;
     }

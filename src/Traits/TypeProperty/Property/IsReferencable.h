@@ -18,7 +18,7 @@ namespace traits {
 
 
 namespace traits {
-    namespace Detail {
+    namespace detail {
         template <typename T, typename = void>
         constexpr bool IsReferencable_V = false;
 
@@ -28,7 +28,7 @@ namespace traits {
 
 
     template <typename T>
-    constexpr bool IsReferencable_V = Detail::IsReferencable_V<T>;
+    constexpr bool IsReferencable_V = detail::IsReferencable_V<T>;
 }
 #endif
 

@@ -8,7 +8,6 @@
 
 
 namespace traits {
-
     template <concepts::Enum T>
     struct UnderlyingType {
         using Type = __underlying_type(T);
@@ -17,6 +16,5 @@ namespace traits {
 
     template <concepts::Enum T>
     using UnderlyingType_T = typename UnderlyingType<T>::Type;
-
-} // namespace traits
+}
 

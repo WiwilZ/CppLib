@@ -8,13 +8,11 @@
 
 
 namespace traits {
-
     template <typename T>
     struct MakeLValueReference : AddLValueReference<T> {};
 
 
     template <typename T>
     using MakeLValueReference_T = typename MakeLValueReference<T>::Type;
-
-} // namespace traits
+}
 

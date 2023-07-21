@@ -4,12 +4,10 @@
 
 #pragma once
 
-#include "../Concepts/TriviallyCopyable.h"
+#include "../Concepts/Integral.h"
 #include "../Traits/MakeIntegerType.h"
+#include "../ArithmeticType.h"
 #include "../Macro.h"
-
-#include <cstdint>
-
 
 
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -17,7 +15,7 @@ extern "C" {
     unsigned long _byteswap_ulong(unsigned long);
     unsigned __int64 _byteswap_uint64(unsigned __int64);
 }
-#elif defined(__SIZEOF_INT128__) && defined(__SSSE3__)
+#elif HAS_INT128 && defined(__SSSE3__)
 #include <emmintrin.h>
 #include <tmmintrin.h>
 #endif
@@ -26,7 +24,7 @@ extern "C" {
 
 namespace detail {
     namespace common {
-        static constexpr uint8_t BitReverseTable[256] {
+        static constexpr u8 BitReverseTable[256] {
             0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
             0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8,
             0x04, 0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4, 0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4,
@@ -45,7 +43,7 @@ namespace detail {
             0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
         };
 
-        [[nodiscard]] constexpr uint8_t BitReverse(uint8_t x) noexcept {
+        [[nodiscard]] constexpr u8 BitReverse(u8 x) noexcept {
             // This method is slower than the table lookup
             // x = (x << 4) | (x >> 4);
             // x = ((x & 0x33) << 2) | ((x >> 2) & 0x33);
@@ -54,7 +52,7 @@ namespace detail {
             return BitReverseTable[x];
         }
 
-        [[nodiscard]] constexpr uint16_t BitReverse(uint16_t x) noexcept {
+        [[nodiscard]] constexpr u16 BitReverse(u16 x) noexcept {
             // This method is slower than the table lookup
             // x = (x << 8) | (x >> 8);
             // x = ((x & 0x0F0F) << 4) | ((x >> 4) & 0x0F0F);
@@ -64,7 +62,7 @@ namespace detail {
             return (BitReverseTable[x & 0xFF] << 8) | BitReverseTable[x >> 8];
         }
 
-        [[nodiscard]] constexpr uint32_t BitReverse(uint32_t x) noexcept {
+        [[nodiscard]] constexpr u32 BitReverse(u32 x) noexcept {
             x = (x << 16) | (x >> 16);
             x = ((x & 0x00FF00FF) << 8) | ((x >> 8) & 0x00FF00FF);
             x = ((x & 0x0F0F0F0F) << 4) | ((x >> 4) & 0x0F0F0F0F);
@@ -73,7 +71,7 @@ namespace detail {
             return x;
         }
 
-        [[nodiscard]] constexpr uint64_t BitReverse(uint64_t x) noexcept {
+        [[nodiscard]] constexpr u64 BitReverse(u64 x) noexcept {
             x = (x << 32) | (x >> 32);
             x = ((x & 0x0000FFFF0000FFFF) << 16) | ((x >> 16) & 0x0000FFFF0000FFFF);
             x = ((x & 0x00FF00FF00FF00FF) << 8) | ((x >> 8) & 0x00FF00FF00FF00FF);
@@ -83,14 +81,14 @@ namespace detail {
             return x;
         }
 
-#ifdef __SIZEOF_INT128__
-        [[nodiscard]] constexpr __uint128_t BitReverse(__uint128_t x) noexcept {
-            constexpr __uint128_t C0 = (__uint128_t{0x00000000FFFFFFFF} << 64) | 0x00000000FFFFFFFF;
-            constexpr __uint128_t C1 = (__uint128_t{0x0000FFFF0000FFFF} << 64) | 0x0000FFFF0000FFFF;
-            constexpr __uint128_t C2 = (__uint128_t{0x00FF00FF00FF00FF} << 64) | 0x00FF00FF00FF00FF;
-            constexpr __uint128_t C3 = (__uint128_t{0x0F0F0F0F0F0F0F0F} << 64) | 0x0F0F0F0F0F0F0F0F;
-            constexpr __uint128_t C4 = (__uint128_t{0x3333333333333333} << 64) | 0x3333333333333333;
-            constexpr __uint128_t C5 = (__uint128_t{0x5555555555555555} << 64) | 0x5555555555555555;
+#if HAS_INT128
+        [[nodiscard]] constexpr u128 BitReverse(u128 x) noexcept {
+            constexpr u128 C0 = (u128{0x00000000FFFFFFFF} << 64) | 0x00000000FFFFFFFF;
+            constexpr u128 C1 = (u128{0x0000FFFF0000FFFF} << 64) | 0x0000FFFF0000FFFF;
+            constexpr u128 C2 = (u128{0x00FF00FF00FF00FF} << 64) | 0x00FF00FF00FF00FF;
+            constexpr u128 C3 = (u128{0x0F0F0F0F0F0F0F0F} << 64) | 0x0F0F0F0F0F0F0F0F;
+            constexpr u128 C4 = (u128{0x3333333333333333} << 64) | 0x3333333333333333;
+            constexpr u128 C5 = (u128{0x5555555555555555} << 64) | 0x5555555555555555;
             x = (x << 64) | (x >> 64);
             x = ((x & C0) << 32) | ((x >> 32) & C0);
             x = ((x & C1) << 16) | ((x >> 16) & C1);
@@ -105,25 +103,25 @@ namespace detail {
 
 
 
-    [[nodiscard]] constexpr uint32_t BitReverseAfterByteSwap(uint32_t x) noexcept {
+    [[nodiscard]] constexpr u32 BitReverseAfterByteSwap(u32 x) noexcept {
         x = ((x & 0x0f0f0f0f) << 4) | ((x >> 4) & 0x0f0f0f0f);
         x = ((x & 0x33333333) << 2) | ((x >> 2) & 0x33333333);
         x = ((x & 0x55555555) << 1) | ((x >> 1) & 0x55555555);
         return x;
     }
 
-    [[nodiscard]] constexpr uint64_t BitReverseAfterByteSwap(uint64_t x) noexcept {
+    [[nodiscard]] constexpr u64 BitReverseAfterByteSwap(u64 x) noexcept {
         x = ((x & 0x0f0f0f0f0f0f0f0f) << 4) | ((x >> 4) & 0x0f0f0f0f0f0f0f0f);
         x = ((x & 0x3333333333333333) << 2) | ((x >> 2) & 0x3333333333333333);
         x = ((x & 0x5555555555555555) << 1) | ((x >> 1) & 0x5555555555555555);
         return x;
     }
 
-#ifdef __SIZEOF_INT128__
-    [[nodiscard]] constexpr __uint128_t BitReverseAfterByteSwap(__uint128_t x) noexcept {
-        constexpr __uint128_t C0 = (__uint128_t{0x0f0f0f0f0f0f0f0f} << 64) | 0x0f0f0f0f0f0f0f0f;
-        constexpr __uint128_t C1 = (__uint128_t{0x3333333333333333} << 64) | 0x3333333333333333;
-        constexpr __uint128_t C2 = (__uint128_t{0x5555555555555555} << 64) | 0x5555555555555555;
+#if HAS_INT128
+    [[nodiscard]] constexpr u128 BitReverseAfterByteSwap(u128 x) noexcept {
+        constexpr u128 C0 = (u128{0x0f0f0f0f0f0f0f0f} << 64) | 0x0f0f0f0f0f0f0f0f;
+        constexpr u128 C1 = (u128{0x3333333333333333} << 64) | 0x3333333333333333;
+        constexpr u128 C2 = (u128{0x5555555555555555} << 64) | 0x5555555555555555;
         x = ((x & C0) << 4) | ((x >> 4) & C0);
         x = ((x & C1) << 2) | ((x >> 2) & C1);
         x = ((x & C2) << 1) | ((x >> 1) & C2);
@@ -133,38 +131,38 @@ namespace detail {
 
 
 
-    [[nodiscard]] constexpr uint8_t BitReverse(uint8_t x) noexcept {
+    [[nodiscard]] constexpr u8 BitReverse(u8 x) noexcept {
         return common::BitReverse(x);
     }
 
-    [[nodiscard]] constexpr uint16_t BitReverse(uint16_t x) noexcept {
+    [[nodiscard]] constexpr u16 BitReverse(u16 x) noexcept {
         return common::BitReverse(x);
     }
 
-    [[nodiscard]] constexpr uint32_t BitReverse(uint32_t x) noexcept {
+    [[nodiscard]] constexpr u32 BitReverse(u32 x) noexcept {
 #if HAS_BUILTIN(__builtin_bitreverse32)
         return __builtin_bitreverse32(x);
 #elif HAS_BUILTIN(__builtin_bswap32)
-        return BitReverseAfterByteSwap(static_cast<uint32_t>(__builtin_bswap32(x)));
+        return BitReverseAfterByteSwap(static_cast<u32>(__builtin_bswap32(x)));
 #else // !HAS_BUILTIN(__builtin_bitreverse32) && !HAS_BUILTIN(__builtin_bswap32)
 #   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
-            return BitReverseAfterByteSwap(static_cast<uint32_t>(_byteswap_ulong(x)));
+            return BitReverseAfterByteSwap(static_cast<u32>(_byteswap_ulong(x)));
         }
 #   endif
         return common::BitReverse(x);
 #endif
     }
 
-    [[nodiscard]] constexpr uint64_t BitReverse(uint64_t x) noexcept {
+    [[nodiscard]] constexpr u64 BitReverse(u64 x) noexcept {
 #if HAS_BUILTIN(__builtin_bitreverse64)
         return __builtin_bitreverse64(x);
 #elif HAS_BUILTIN(__builtin_bswap64)
-        return BitReverseAfterByteSwap(static_cast<uint64_t>(__builtin_bswap64(x)));
+        return BitReverseAfterByteSwap(static_cast<u64>(__builtin_bswap64(x)));
 #else // !HAS_BUILTIN(__builtin_bitreverse64) && !HAS_BUILTIN(__builtin_bswap64)
 #   if defined(_MSC_VER) && !defined(__clang__)
         if (!__builtin_is_constant_evaluated()) {
-            return BitReverseAfterByteSwap(static_cast<uint64_t>(_byteswap_uint64(x)));
+            return BitReverseAfterByteSwap(static_cast<u64>(_byteswap_uint64(x)));
         }
 #   endif
         return common::BitReverse(x);
@@ -172,13 +170,13 @@ namespace detail {
     }
 
 #if defined(__SIZEOF_INT128__)
-    [[nodiscard]] constexpr __uint128_t BitReverse(__uint128_t x) noexcept {
+    [[nodiscard]] constexpr u128 BitReverse(u128 x) noexcept {
 #   if HAS_BUILTIN(__builtin_bitreverse64)
-        return (__uint128_t{__builtin_bitreverse64(x)} << 64) | __builtin_bitreverse64(x >> 64);
+        return (u128{__builtin_bitreverse64(x)} << 64) | __builtin_bitreverse64(x >> 64);
 #   elif HAS_BUILTIN(__builtin_bswap128)
         return BitReverseAfterByteSwap(__builtin_bswap128(x));
 #   elif HAS_BUILTIN(__builtin_bswap64)
-        return BitReverseAfterByteSwap((__uint128_t{__builtin_bswap64(x)} << 64) | __builtin_bswap64(x >> 64));
+        return BitReverseAfterByteSwap((u128{__builtin_bswap64(x)} << 64) | __builtin_bswap64(x >> 64));
 #   else // !HAS_BUILTIN(__builtin_bitreverse64) && !HAS_BUILTIN(__builtin_bswap128) && !HAS_BUILTIN(__builtin_bswap64)
 #       ifdef __SSSE3__
         if (!__builtin_is_constant_evaluated()) {
@@ -188,7 +186,7 @@ namespace detail {
             const __m128i c2 = _mm_setr_epi8(0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e, 0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f);
             const __m128i low = _mm_shuffle_epi8(c1, _mm_and_si128(c0, r));
             const __m128i high = _mm_shuffle_epi8(c2, _mm_srli_epi32(_mm_andnot_si128(c0, r), 4));
-            return __builtin_bit_cast(__uint128_t, _mm_or_si128(low, high));
+            return __builtin_bit_cast(u128, _mm_or_si128(low, high));
         }
 #       endif
         return common::BitReverse(x);
@@ -199,8 +197,8 @@ namespace detail {
 
 
 
-template <concepts::TriviallyCopyable T>
+template <concepts::Integral T>
 [[nodiscard]] constexpr T BitReverse(T x) noexcept {
-    return __builtin_bit_cast(T, detail::BitReverse(__builtin_bit_cast(traits::MakeUInt_T<sizeof(T)>, x)));
+    return detail::BitReverse(static_cast<traits::MakeUInt_T<sizeof(T)>>(x));
 }
 

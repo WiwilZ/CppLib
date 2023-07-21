@@ -13,7 +13,6 @@
 
 
 namespace traits {
-
     template <typename T>
     struct Decay : Conditional<IsArray_V<T>,
             AddPointer_T<RemoveExtent_T<T>>,
@@ -22,6 +21,5 @@ namespace traits {
 
     template <typename T>
     using Decay_T = typename Decay<T>::Type;
-
-} // namespace traits
+}
 

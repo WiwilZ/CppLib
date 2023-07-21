@@ -9,9 +9,7 @@
 
 
 namespace traits {
-
-    namespace Detail {
-
+    namespace detail {
         template <typename T, typename = void>
         struct AddPointer {
             using Type = T;
@@ -21,17 +19,15 @@ namespace traits {
         struct AddPointer<T, Void_T<RemoveReference_T<T>*>> {
             using Type = RemoveReference_T<T>*;
         };
-
-    } // namespace Detail
+    }
 
 
     template <typename T>
     struct AddPointer {
-        using Type = typename Detail::AddPointer<T>::Type;
+        using Type = typename detail::AddPointer<T>::Type;
     };
 
 
     template <typename T>
     using AddPointer_T = typename AddPointer<T>::Type;
-
-} // namespace traits
+}

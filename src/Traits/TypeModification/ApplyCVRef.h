@@ -11,7 +11,6 @@
 
 
 namespace traits {
-
     template <typename From, typename To>
     using ApplyCVRef_T = ApplyReference_T<From, ApplyCV_T<From, RemoveCVRef_T<To>>>;
 
@@ -20,6 +19,5 @@ namespace traits {
     struct ApplyCVRef {
         using Type = ApplyCVRef_T<From, To>;
     };
-
-} // namespace traits
+}
 

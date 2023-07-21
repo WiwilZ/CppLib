@@ -4,13 +4,12 @@
 
 #pragma once
 
+
 #include "../Concepts/UnsignedInteger.h"
 #include "../Concepts/Integral.h"
 #include "../Traits/MakeIntegerType.h"
+#include "../ArithmeticType.h"
 #include "../Macro.h"
-
-#include <cstdint>
-
 
 
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -49,7 +48,7 @@ extern "C" {
 
 namespace detail {
     namespace common {
-        static constexpr uint8_t BitLengthTable[256] {
+        static constexpr u8 BitLengthTable[256] {
             0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
             5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
             6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -68,58 +67,58 @@ namespace detail {
             8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
         };
 
-        [[nodiscard]] constexpr int BitLength(uint8_t x) noexcept {
+        [[nodiscard]] constexpr usize BitLength(u8 x) noexcept {
             return BitLengthTable[x];
         }
 
-        [[nodiscard]] constexpr int BitLength(uint16_t x) noexcept {
-            return (__builtin_bit_cast(uint32_t, static_cast<float>(x)) >> 23) - 0x7f + 1;
+        [[nodiscard]] constexpr usize BitLength(u16 x) noexcept {
+            return (__builtin_bit_cast(u32, static_cast<float>(x)) >> 23) - 0x7f + 1;
         }
 
-        [[nodiscard]] constexpr int BitLength(uint32_t x) noexcept {
-            return (__builtin_bit_cast(uint64_t, static_cast<double>(x)) >> 52) - 0x3ff + 1;
+        [[nodiscard]] constexpr usize BitLength(u32 x) noexcept {
+            return (__builtin_bit_cast(u64, static_cast<double>(x)) >> 52) - 0x3ff + 1;
         }
 
-        [[nodiscard]] constexpr int BitLength(uint64_t x) noexcept {
+        [[nodiscard]] constexpr usize BitLength(u64 x) noexcept {
 #ifdef __AVX512F__
             if (!__builtin_is_constant_evaluated()) {
                 const float v = _mm_cvtss_f32(_mm_cvt_roundu64_ss(_mm_undefined_ps(), x, _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC));
                 return (__builtin_bit_cast(uint32_t, v) >> 23) - 0x7f + 1;
             }
 #endif
-            const uint32_t high = x >> 32;
+            const u32 high = x >> 32;
             if (high != 0) {
                 return 32 + BitLength(high);
             }
-            const uint32_t low = x;
+            const u32 low = x;
             return BitLength(low);
         }
 
-#ifdef __SIZEOF_INT128__
-        [[nodiscard]] constexpr int BitLength(__uint128_t x) noexcept {
+#if HAS_INT128
+        [[nodiscard]] constexpr usize BitLength(u128 x) noexcept {
 //            int n = 0;
-//            if (static_cast<uint64_t>(x >> 64) & ~uint64_t{}) {
+//            if (static_cast<u64>(x >> 64) & ~u64{}) {
 //                x >>= 64;
 //                n = 64;
 //            }
-//            if (static_cast<uint32_t>(x >> 32) & ~uint32_t{}) {
+//            if (static_cast<u32>(x >> 32) & ~u32{}) {
 //                x >>= 32;
 //                n += 32;
 //            }
-//            if (static_cast<uint16_t>(x >> 16) & ~uint16_t{}) {
+//            if (static_cast<u16>(x >> 16) & ~u16{}) {
 //                x >>= 16;
 //                n += 16;
 //            }
-//            if (static_cast<uint8_t>(x >> 8) & ~uint8_t{}) {
+//            if (static_cast<u8>(x >> 8) & ~u8{}) {
 //                x >>= 8;
 //                n += 8;
 //            }
 //            return n + BitLengthTable[x];
-            const uint64_t high = x >> 64;
+            const u64 high = x >> 64;
             if (high != 0) {
                 return 64 + BitLength(high);
             }
-            const uint64_t low = x;
+            const u64 low = x;
             return BitLength(low);
         }
 #endif
@@ -131,7 +130,7 @@ namespace detail {
     namespace x86 {
 #   ifndef __AVX2__
         template <concepts::UnsignedInteger T>
-        [[nodiscard]] __forceinline int BitLengthByBSR(T x) noexcept {
+        [[nodiscard]] __forceinline usize BitLengthByBSR(T x) noexcept {
             unsigned long result;
             if constexpr (sizeof(T) <= 4) {
                 if (_BitScanReverse(&result, x)) {
@@ -139,11 +138,11 @@ namespace detail {
                 }
             } else {
 #       ifdef _M_IX86
-                const uint32_t high = x >> 32;
+                const u32 high = x >> 32;
                 if (_BitScanReverse(&result, high)) {
                     return result + 1 + 32;
                 }
-                const uint32_t low = x;
+                const u32 low = x;
                 if (_BitScanReverse(&result, low)) {
                     return result + 1;
                 }
@@ -158,16 +157,16 @@ namespace detail {
 #   endif // !defined(__AVX2__)
 
         template <concepts::UnsignedInteger T>
-        [[nodiscard]] __forceinline int BitLengthByLZCNT(T x) noexcept {
+        [[nodiscard]] __forceinline usize BitLengthByLZCNT(T x) noexcept {
             if constexpr (sizeof(T) <= 4) {
                 return 32 - __lzcnt(x);
             } else {
 #       ifdef _M_IX86
-                const uint32_t high = x >> 32;
+                const u32 high = x >> 32;
                 if (high != 0) {
                     return 64 - __lzcnt(high);
                 }
-                const uint32_t low = x;
+                const u32 low = x;
                 return 32 - __lzcnt(low);
 #       else // !defined(_M_IX86)
                 return 64 - __lzcnt64(x);
@@ -176,7 +175,7 @@ namespace detail {
         }
 
         template <concepts::UnsignedInteger T>
-        [[nodiscard]] __forceinline int BitLength(T x) noexcept {
+        [[nodiscard]] __forceinline usize BitLength(T x) noexcept {
 #   ifndef __AVX2__
             if (__isa_available < __ISA_AVAILABLE_AVX2) {
                 return BitLengthByBSR(x);
@@ -205,7 +204,7 @@ namespace detail {
 
     template <concepts::UnsignedInteger T>
     requires (sizeof(T) <= 4)
-    [[nodiscard]] constexpr int BitLength(T x) noexcept {
+    [[nodiscard]] constexpr usize BitLength(T x) noexcept {
 #if HAS_BUILTIN(__builtin_clz)
         return 32 - __builtin_clz(x);
 #else // !HAS_BUILTIN(__builtin_clz)
@@ -222,7 +221,7 @@ namespace detail {
 #endif
     }
 
-    [[nodiscard]] constexpr int BitLength(uint64_t x) noexcept {
+    [[nodiscard]] constexpr usize BitLength(u64 x) noexcept {
 #if HAS_BUILTIN(__builtin_clzll)
         return 64 - __builtin_clzll(x);
 #else // !HAS_BUILTIN(__builtin_clzll)
@@ -239,20 +238,20 @@ namespace detail {
 #endif
     }
 
-#ifdef __SIZEOF_INT128__
-    [[nodiscard]] constexpr int BitLength(__uint128_t x) noexcept {
+#if HAS_INT128
+    [[nodiscard]] constexpr usize BitLength(u128 x) noexcept {
 #if HAS_BUILTIN(__builtin_clzll)
-        const uint64_t high = x >> 64;
+        const u64 high = x >> 64;
         if (high != 0) {
             return 128 - __builtin_clzll(high);
         }
-        const uint64_t low = x;
+        const u64 low = x;
         return 64 - __builtin_clzll(low);
 #else
         return common::BitLength(x);
 #endif
     }
-#endif // __SIZEOF_INT128__
+#endif
 } // namespace detail
 
 
@@ -263,7 +262,7 @@ namespace detail {
 
 
 template <concepts::Integral T>
-[[nodiscard]] constexpr int BitLength(T x) noexcept {
+[[nodiscard]] constexpr usize BitLength(T x) noexcept {
     return detail::BitLength(static_cast<traits::MakeUInt_T<sizeof(T)>>(x));
 }
 

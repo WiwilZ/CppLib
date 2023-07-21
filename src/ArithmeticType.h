@@ -7,9 +7,6 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "Traits/TypeModification/SignModifier/MakeSigned.h"
-
-
 
 using i8 = int8_t;
 using u8 = uint8_t;
@@ -22,13 +19,16 @@ using u64 = uint64_t;
 
 
 #ifdef __SIZEOF_INT128__
+#define HAS_INT128 1
 using i128 = __int128_t;
 using u128 = __uint128_t;
+#else
+#define HAS_INT128 0
 #endif
 
 
 
-using isize = traits::MakeSigned_T<size_t>;
+using isize = ptrdiff_t;
 using usize = size_t;
 
 

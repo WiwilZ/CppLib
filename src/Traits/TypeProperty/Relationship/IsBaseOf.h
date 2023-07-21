@@ -19,7 +19,7 @@ namespace traits {
 
 
 namespace traits {
-    namespace Detail {
+    namespace detail {
         template <typename T>
         traits::TrueType TestIsBaseOf(const volatile T*);
 
@@ -39,7 +39,7 @@ namespace traits {
     }
 
     template <typename Base, typename Derived>
-    constexpr bool IsBaseOf_V = IsClass_V<Base> && IsClass_V<Derived> && Detail::IsBaseOf_V<Base, Derived>;
+    constexpr bool IsBaseOf_V = IsClass_V<Base> && IsClass_V<Derived> && detail::IsBaseOf_V<Base, Derived>;
 }
 #endif
 

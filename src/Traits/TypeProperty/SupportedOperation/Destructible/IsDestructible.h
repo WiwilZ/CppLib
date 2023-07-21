@@ -23,13 +23,13 @@ namespace traits {
 
 
 namespace traits {
-    namespace Detail {
+    namespace detail {
         template <typename T>
         constexpr bool IsDestructible_V = requires{ traits::DeclVal<T&>().~T(); };
     }
 
     template <typename T>
-    constexpr bool IsDestructible_V = IsReference_V<T> || !(IsVoid_V<T> || IsFunction_V<T> || IsUnboundedArray_V<T>) || Detail::IsDestructible_V<RemoveAllExtents_T<T>>;
+    constexpr bool IsDestructible_V = IsReference_V<T> || !(IsVoid_V<T> || IsFunction_V<T> || IsUnboundedArray_V<T>) || detail::IsDestructible_V<RemoveAllExtents_T<T>>;
 }
 #endif
 

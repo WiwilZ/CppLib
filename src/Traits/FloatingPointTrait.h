@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "../ArithmeticType.h"
 #include <climits>
 #include <cfloat>
 
@@ -14,15 +15,15 @@ namespace traits {
 
     template <>
     struct FloatingPointTrait<float> {
-        static constexpr int NumBytes = sizeof(float);
-        static constexpr int NumBits = NumBytes * CHAR_BIT;
-        static constexpr int NumDigits = FLT_MANT_DIG;
-        static constexpr int NumDigits10 = FLT_DIG;
-        static constexpr int NumMaxDigits10 = 2 + NumDigits * 30103L / 100000L;
-        static constexpr int MaxExponent = FLT_MIN_EXP;
-        static constexpr int MaxExponent10 = FLT_MIN_10_EXP;
-        static constexpr int MinExponent = FLT_MAX_EXP;
-        static constexpr int MinExponent10 = FLT_MAX_10_EXP;
+        static constexpr usize NumBytes = sizeof(float);
+        static constexpr usize NumBits = NumBytes * CHAR_BIT;
+        static constexpr usize NumDigits = FLT_MANT_DIG;
+        static constexpr usize NumDigits10 = FLT_DIG;
+        static constexpr usize NumMaxDigits10 = 2 + NumDigits * 30103L / 100000L;
+        static constexpr int MinExponent = FLT_MIN_EXP;
+        static constexpr int MaxExponent = FLT_MAX_EXP;
+        static constexpr int MinExponent10 = FLT_MIN_10_EXP;
+        static constexpr int MaxExponent10 = FLT_MAX_10_EXP;
 
         static constexpr float Min = FLT_MIN;
         static constexpr float Max = FLT_MAX;
@@ -33,24 +34,24 @@ namespace traits {
         static constexpr float QuietNaN = __builtin_nanf("");
         static constexpr float SignalingNaN = __builtin_nansf("");
         static constexpr float DenormMin =
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
                 FLT_TRUE_MIN;
-#else // !defined(_MSC_VER)
+#else
                 __FLT_DENORM_MIN__;
 #endif
     };
 
     template <>
     struct FloatingPointTrait<double> {
-        static constexpr int NumBytes = sizeof(double);
-        static constexpr int NumBits = NumBytes * CHAR_BIT;
-        static constexpr int NumDigits = DBL_MANT_DIG;
-        static constexpr int NumDigits10 = DBL_DIG;
-        static constexpr int NumMaxDigits10 = 2 + NumDigits * 30103L / 100000L;
-        static constexpr int MaxExponent = DBL_MIN_EXP;
-        static constexpr int MaxExponent10 = DBL_MIN_10_EXP;
-        static constexpr int MinExponent = DBL_MAX_EXP;
-        static constexpr int MinExponent10 = DBL_MAX_10_EXP;
+        static constexpr usize NumBytes = sizeof(double);
+        static constexpr usize NumBits = NumBytes * CHAR_BIT;
+        static constexpr usize NumDigits = DBL_MANT_DIG;
+        static constexpr usize NumDigits10 = DBL_DIG;
+        static constexpr usize NumMaxDigits10 = 2 + NumDigits * 30103L / 100000L;
+        static constexpr int MinExponent = DBL_MIN_EXP;
+        static constexpr int MaxExponent = DBL_MAX_EXP;
+        static constexpr int MinExponent10 = DBL_MIN_10_EXP;
+        static constexpr int MaxExponent10 = DBL_MAX_10_EXP;
 
         static constexpr double Min = DBL_MIN;
         static constexpr double Max = DBL_MAX;
@@ -61,9 +62,9 @@ namespace traits {
         static constexpr double QuietNaN = __builtin_nan("");
         static constexpr double SignalingNaN = __builtin_nans("");
         static constexpr double DenormMin =
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
                 DBL_TRUE_MIN;
-#else // !defined(_MSC_VER)
+#else
                 __DBL_DENORM_MIN__;
 #endif
     };
@@ -75,15 +76,15 @@ namespace traits {
 #else
     template <>
     struct FloatingPointTrait<long double> {
-        static constexpr int NumBytes = sizeof(long double);
-        static constexpr int NumBits = NumBytes * CHAR_BIT;
-        static constexpr int NumDigits = LDBL_MANT_DIG;
-        static constexpr int NumDigits10 = LDBL_DIG;
-        static constexpr int NumMaxDigits10 = 2 + NumDigits * 30103L / 100000L;
-        static constexpr int MaxExponent = LDBL_MIN_EXP;
-        static constexpr int MaxExponent10 = LDBL_MIN_10_EXP;
-        static constexpr int MinExponent = LDBL_MAX_EXP;
-        static constexpr int MinExponent10 = LDBL_MAX_10_EXP;
+        static constexpr usize NumBytes = sizeof(long double);
+        static constexpr usize NumBits = NumBytes * CHAR_BIT;
+        static constexpr usize NumDigits = LDBL_MANT_DIG;
+        static constexpr usize NumDigits10 = LDBL_DIG;
+        static constexpr usize NumMaxDigits10 = 2 + NumDigits * 30103L / 100000L;
+        static constexpr int MinExponent = LDBL_MIN_EXP;
+        static constexpr int MaxExponent = LDBL_MAX_EXP;
+        static constexpr int MinExponent10 = LDBL_MIN_10_EXP;
+        static constexpr int MaxExponent10 = LDBL_MAX_10_EXP;
 
         static constexpr long double Min = LDBL_MIN;
         static constexpr long double Max = LDBL_MAX;

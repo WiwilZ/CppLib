@@ -6,7 +6,6 @@
 
 
 namespace traits {
-
     template <typename T>
     struct RemoveConst {
         using Type = T;
@@ -20,5 +19,4 @@ namespace traits {
 
     template <typename T>
     using RemoveConst_T = typename RemoveConst<T>::Type;
-
-} // namespace traits
+}
