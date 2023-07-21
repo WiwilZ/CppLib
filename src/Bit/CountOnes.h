@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "../Concept/Integral.h"
-#include "../Concept/UnsignedInteger.h"
-#include "../Trait/TypeModification/SignModifier/MakeUnsigned.h"
+#include "../Concepts/Integral.h"
+#include "../Concepts/UnsignedInteger.h"
+#include "../Traits/TypeModification/SignModifier/MakeUnsigned.h"
 #include "../Macro.h"
 
 #include <cstdint>
@@ -31,8 +31,8 @@ extern "C" {
 
 
 
-namespace Detail {
-    namespace Common {
+namespace detail {
+    namespace common {
         static constexpr uint8_t PopCountTable[256]{
                 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
                 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
@@ -89,17 +89,17 @@ namespace Detail {
             return x;
         }
 #endif
-    } // namespace Common
+    } // namespace common
 
 
 
 #ifdef USE_X86_INTRINSICS
-    namespace X86 {
-        template <Concept::UnsignedInteger T>
+    namespace x86 {
+        template <concepts::UnsignedInteger T>
         [[nodiscard]] __forceinline int CountOnes(T x) noexcept {
 #   ifndef __AVX2__
             if (__isa_available < __ISA_AVAILABLE_AVX2) {
-                return Common::CountOnes(x);
+                return common::CountOnes(x);
             }
 #   endif // __AVX2__
             if constexpr (sizeof(T) <= 4) {
@@ -112,19 +112,19 @@ namespace Detail {
 #   endif
             }
         }
-    } // namespace X86
+    } // namespace x86
 #elif defined(USE_ARM_INTRINSICS)
-    namespace Arm {
+    namespace arm {
         [[nodiscard]] __forceinline int CountOnes(uint64_t x) noexcept {
             const __n64 v = neon_cnt(__uint64ToN64_v(x));
             return neon_addv8(v).n8_i8[0];
         }
-    } // namespace Arm
+    } // namespace arm
 #endif
 
 
 
-    template <Concept::UnsignedInteger T>
+    template <concepts::UnsignedInteger T>
     requires (sizeof(T) <= 4)
     [[nodiscard]] constexpr int CountOnes(T x) noexcept {
 #if HAS_BUILTIN(__builtin_popcount)
@@ -132,14 +132,14 @@ namespace Detail {
 #else // !HAS_BUILTIN(__builtin_popcount)
 #   ifdef USE_X86_INTRINSICS
         if (!__builtin_is_constant_evaluated()) {
-            return X86::CountOnes(x);
+            return x86::CountOnes(x);
         }
 #   elif defined(USE_ARM_INTRINSICS)
         if (!__builtin_is_constant_evaluated()) {
-            return Arm::CountOnes(x);
+            return arm::CountOnes(x);
         }
 #   endif
-        return Common::CountOnes(x);
+        return common::CountOnes(x);
 #endif
     }
 
@@ -149,14 +149,14 @@ namespace Detail {
 #else // !HAS_BUILTIN(__builtin_popcountll)
 #   ifdef USE_X86_INTRINSICS
         if (!__builtin_is_constant_evaluated()) {
-            return X86::CountOnes(x);
+            return x86::CountOnes(x);
         }
 #   elif defined(USE_ARM_INTRINSICS)
         if (!__builtin_is_constant_evaluated()) {
-            return Arm::CountOnes(x);
+            return arm::CountOnes(x);
         }
 #   endif
-        return Common::CountOnes(x);
+        return common::CountOnes(x);
 #endif
     }
 
@@ -165,22 +165,24 @@ namespace Detail {
 #if HAS_BUILTIN(__builtin_popcountll)
         return __builtin_popcountll(x >> 64) + __builtin_popcountll(x);
 #else // !HAS_BUILTIN(__builtin_popcountll)
-        return Common::CountOnes(x);
+        return common::CountOnes(x);
 #endif
     }
 #endif // __SIZEOF_INT128__
-} // namespace Detail
-
-
-
-namespace Bit {
-    template <Concept::Integral T>
-    [[nodiscard]] constexpr int CountOnes(T x) noexcept {
-        return Detail::CountOnes(static_cast<Trait::MakeUInt_T<sizeof(T)>>(x));
-    }
-}
+} // namespace detail
 
 
 
 #undef USE_X86_INTRINSICS
 #undef USE_ARM_INTRINSICS
+
+
+
+template <concepts::Integral T>
+[[nodiscard]] constexpr int CountOnes(T x) noexcept {
+    return detail::CountOnes(static_cast<traits::MakeUInt_T<sizeof(T)>>(x));
+}
+
+
+
+

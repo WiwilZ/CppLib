@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "../Concept/UnsignedInteger.h"
-#include "../Concept/Integral.h"
-#include "../Trait/MakeIntegerType.h"
+#include "../Concepts/UnsignedInteger.h"
+#include "../Concepts/Integral.h"
+#include "../Traits/MakeIntegerType.h"
 #include "../Macro.h"
 
 #include <cstdint>
@@ -47,8 +47,8 @@ extern "C" {
 
 
 
-namespace Detail {
-    namespace Common {
+namespace detail {
+    namespace common {
         static constexpr uint8_t BitLengthTable[256] {
             0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
             5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
@@ -123,14 +123,14 @@ namespace Detail {
             return BitLength(low);
         }
 #endif
-    } // namespace Common
+    } // namespace common
 
 
 
 #ifdef USE_X86_INTRINSICS
-    namespace X86 {
+    namespace x86 {
 #   ifndef __AVX2__
-        template <Concept::UnsignedInteger T>
+        template <concepts::UnsignedInteger T>
         [[nodiscard]] __forceinline int BitLengthByBSR(T x) noexcept {
             unsigned long result;
             if constexpr (sizeof(T) <= 4) {
@@ -157,7 +157,7 @@ namespace Detail {
         }
 #   endif // !defined(__AVX2__)
 
-        template <Concept::UnsignedInteger T>
+        template <concepts::UnsignedInteger T>
         [[nodiscard]] __forceinline int BitLengthByLZCNT(T x) noexcept {
             if constexpr (sizeof(T) <= 4) {
                 return 32 - __lzcnt(x);
@@ -175,7 +175,7 @@ namespace Detail {
             }
         }
 
-        template <Concept::UnsignedInteger T>
+        template <concepts::UnsignedInteger T>
         [[nodiscard]] __forceinline int BitLength(T x) noexcept {
 #   ifndef __AVX2__
             if (__isa_available < __ISA_AVAILABLE_AVX2) {
@@ -184,10 +184,10 @@ namespace Detail {
 #   endif
             return BitLengthByLZCNT(x);
         }
-    } // namespace X86
+    } // namespace x86
 #elif defined(USE_ARM_INTRINSICS)
-    namespace Arm {
-        template <Concept::UnsignedInteger T>
+    namespace arm {
+        template <concepts::UnsignedInteger T>
         [[nodiscard]] __forceinline int BitLength(T x) noexcept {
             if (x == 0) {
                 return 0;
@@ -198,12 +198,12 @@ namespace Detail {
                 return 64 - _CountLeadingZeros64(x);
             }
         }
-    } // namespace Arm
+    } // namespace arm
 #endif
 
 
 
-    template <Concept::UnsignedInteger T>
+    template <concepts::UnsignedInteger T>
     requires (sizeof(T) <= 4)
     [[nodiscard]] constexpr int BitLength(T x) noexcept {
 #if HAS_BUILTIN(__builtin_clz)
@@ -211,14 +211,14 @@ namespace Detail {
 #else // !HAS_BUILTIN(__builtin_clz)
 #   ifdef USE_X86_INTRINSICS
         if (!__builtin_is_constant_evaluated()) {
-            return X86::BitLength(x);
+            return x86::BitLength(x);
         }
 #   elif defined(USE_ARM_INTRINSICS)
         if (!__builtin_is_constant_evaluated()) {
-            return Arm::BitLength(x);
+            return arm::BitLength(x);
         }
 #   endif
-        return Common::BitLength(x);
+        return common::BitLength(x);
 #endif
     }
 
@@ -228,14 +228,14 @@ namespace Detail {
 #else // !HAS_BUILTIN(__builtin_clzll)
 #   ifdef USE_X86_INTRINSICS
         if (!__builtin_is_constant_evaluated()) {
-            return X86::BitLength(x);
+            return x86::BitLength(x);
         }
 #   elif defined(USE_ARM_INTRINSICS)
         if (!__builtin_is_constant_evaluated()) {
-            return Arm::BitLength(x);
+            return arm::BitLength(x);
         }
 #   endif
-        return Common::BitLength(x);
+        return common::BitLength(x);
 #endif
     }
 
@@ -249,23 +249,21 @@ namespace Detail {
         const uint64_t low = x;
         return 64 - __builtin_clzll(low);
 #else
-        return Common::BitLength(x);
+        return common::BitLength(x);
 #endif
     }
 #endif // __SIZEOF_INT128__
-} // namespace Detail
-
-
-
-namespace Bit {
-    template <Concept::Integral T>
-    [[nodiscard]] constexpr int BitLength(T x) noexcept {
-        return Detail::BitLength(static_cast<Trait::MakeUInt_T<sizeof(T)>>(x));
-    }
-}
+} // namespace detail
 
 
 
 #undef USE_X86_INTRINSICS
 #undef USE_ARM_INTRINSICS
+
+
+
+template <concepts::Integral T>
+[[nodiscard]] constexpr int BitLength(T x) noexcept {
+    return detail::BitLength(static_cast<traits::MakeUInt_T<sizeof(T)>>(x));
+}
 

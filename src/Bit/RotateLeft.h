@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "../Concept/UnsignedInteger.h"
-#include "../Concept/Integral.h"
-#include "../Trait/MakeIntegerType.h"
-#include "../Trait/IntegralTrait.h"
+#include "../Concepts/UnsignedInteger.h"
+#include "../Concepts/Integral.h"
+#include "../Traits/MakeIntegerType.h"
+#include "../Traits/IntegralTrait.h"
 #include "../Macro.h"
 
 #include <cstdint>
@@ -25,18 +25,18 @@ extern "C" {
 
 
 
-namespace Detail {
-    namespace Common {
-        template <Concept::UnsignedInteger T>
+namespace detail {
+    namespace common {
+        template <concepts::UnsignedInteger T>
         [[nodiscard]] constexpr T RotateLeft(T x, unsigned n) noexcept {
-            constexpr int NumBits = Trait::IntegralTrait<T>::NumBits;
+            constexpr int NumBits = traits::IntegralTrait<T>::NumBits;
             n %= NumBits;
             if (n == 0) {
                 return x;
             }
             return (x << n) | (x >> (NumBits - n));
         }
-    } // namespace Common
+    } // namespace common
 
 
 
@@ -49,7 +49,7 @@ namespace Detail {
             return _rotl8(x, n);
         }
 #   endif
-        return Common::RotateLeft(x, n);
+        return common::RotateLeft(x, n);
 #endif
     }
 
@@ -62,7 +62,7 @@ namespace Detail {
             return _rotl16(x, n);
         }
 #   endif
-        return Common::RotateLeft(x, n);
+        return common::RotateLeft(x, n);
 #endif
     }
 
@@ -75,7 +75,7 @@ namespace Detail {
             return _rotl(x, n);
         }
 #   endif
-        return Common::RotateLeft(x, n);
+        return common::RotateLeft(x, n);
 #endif
     }
 
@@ -88,22 +88,20 @@ namespace Detail {
             return _rotl64(x, n);
         }
 #   endif
-        return Common::RotateLeft(x, n);
+        return common::RotateLeft(x, n);
 #endif
     }
 
 #ifdef __SIZEOF_INT128__
     [[nodiscard]] constexpr __uint128_t RotateLeft(__uint128_t x, unsigned n) noexcept {
-        return Common::RotateLeft(x, n);
+        return common::RotateLeft(x, n);
     }
 #endif
-} // namespace Detail
+} // namespace detail
 
 
 
-namespace Bit {
-    template <Concept::Integral T>
-    [[nodiscard]] constexpr T RotateLeft(T x, unsigned n) noexcept {
-        return Detail::RotateLeft(static_cast<Trait::MakeUInt_T<sizeof(T)>>(x), n);
-    }
+template <concepts::Integral T>
+[[nodiscard]] constexpr T RotateLeft(T x, unsigned n) noexcept {
+    return detail::RotateLeft(static_cast<traits::MakeUInt_T<sizeof(T)>>(x), n);
 }

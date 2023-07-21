@@ -5,15 +5,13 @@
 #pragma once
 
 #include "BitLength.h"
-#include "../Concept/Integral.h"
-#include "../Trait/IntegralTrait.h"
+#include "../Concepts/Integral.h"
+#include "../Traits/IntegralTrait.h"
 
 
 
-namespace Bit {
-    template <Concept::Integral T>
-    [[nodiscard]] constexpr int CountLeadingZeros(T x) noexcept {
-        return Trait::IntegralTrait<T>::NumBits - BitLength(x);
-    }
+template <concepts::Integral T>
+[[nodiscard]] constexpr int CountLeadingZeros(T x) noexcept {
+    return traits::IntegralTrait<T>::NumBits - ::BitLength(x);
 }
 

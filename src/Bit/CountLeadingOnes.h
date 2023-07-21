@@ -5,13 +5,11 @@
 #pragma once
 
 #include "CountLeadingZeros.h"
-#include "../Concept/Integral.h"
+#include "../Concepts/Integral.h"
 
 
 
-namespace Bit {
-    template <Concept::Integral T>
-    [[nodiscard]] constexpr int CountLeadingOnes(T x) noexcept {
-        return CountLeadingZeros(~x);
-    }
+template <concepts::Integral T>
+[[nodiscard]] constexpr int CountLeadingOnes(T x) noexcept {
+    return ::CountLeadingZeros(~x);
 }

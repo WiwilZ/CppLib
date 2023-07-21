@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../Concept/TriviallyCopyable.h"
-#include "../Trait/MakeIntegerType.h"
+#include "../Concepts/TriviallyCopyable.h"
+#include "../Traits/MakeIntegerType.h"
 #include "../Macro.h"
 
 #include <cstdint>
@@ -22,8 +22,8 @@ extern "C" {
 
 
 
-namespace Detail {
-    namespace Common {
+namespace detail {
+    namespace common {
         [[nodiscard]] constexpr uint16_t ByteSwap(uint16_t x) noexcept {
             return (x << 8) | (x >> 8);
         }
@@ -53,7 +53,7 @@ namespace Detail {
             return x;
         }
 #endif
-    } // namespace Common
+    } // namespace common
 
 
 
@@ -66,7 +66,7 @@ namespace Detail {
             return _byteswap_ushort(x);
         }
 #   endif
-        return Common::ByteSwap(x);
+        return common::ByteSwap(x);
 #endif
     }
 
@@ -79,7 +79,7 @@ namespace Detail {
             return _byteswap_ulong(x);
         }
 #   endif
-        return Common::ByteSwap(x);
+        return common::ByteSwap(x);
 #endif
     }
 
@@ -92,7 +92,7 @@ namespace Detail {
             return _byteswap_uint64(x);
         }
 #   endif
-        return Common::ByteSwap(x);
+        return common::ByteSwap(x);
 #endif
     }
 
@@ -103,22 +103,20 @@ namespace Detail {
 #   elif HAS_BUILTIN(__builtin_bswap64)
         return (__uint128_t{__builtin_bswap64(x)} << 64) | __builtin_bswap64(x >> 64);
 #   else // !HAS_BUILTIN(__builtin_bswap128) && !HAS_BUILTIN(__builtin_bswap64)
-        return Common::ByteSwap(x);
+        return common::ByteSwap(x);
 #   endif
     }
 #endif // defined(__SIZEOF_INT128__)
-} // namespace Detail
+} // namespace detail
 
 
 
-namespace Bit {
-    template <Concept::TriviallyCopyable T>
-    [[nodiscard]] constexpr T ByteSwap(T x) noexcept {
-        if constexpr (sizeof(T) == 1) {
-            return x;
-        } else {
-            return __builtin_bit_cast(T, Detail::ByteSwap(__builtin_bit_cast(Trait::MakeUInt_T<sizeof(T)>, x)));
-        }
+template <concepts::TriviallyCopyable T>
+[[nodiscard]] constexpr T ByteSwap(T x) noexcept {
+    if constexpr (sizeof(T) == 1) {
+        return x;
+    } else {
+        return __builtin_bit_cast(T, detail::ByteSwap(__builtin_bit_cast(traits::MakeUInt_T<sizeof(T)>, x)));
     }
 }
 

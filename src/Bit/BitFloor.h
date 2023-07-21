@@ -5,16 +5,14 @@
 #pragma once
 
 #include "BitLength.h"
-#include "../Concept/Integral.h"
+#include "../Concepts/Integral.h"
 
 
 
-namespace Bit {
-    template <Concept::Integral T>
-    [[nodiscard]] constexpr T BitFloor(T x) noexcept {
-        if (x <= 0) {
-            return 0;
-        }
-        return static_cast<T>(1) << (BitLength(x) - 1);
+template <concepts::Integral T>
+[[nodiscard]] constexpr T BitFloor(T x) noexcept {
+    if (x <= 0) {
+        return 0;
     }
+    return static_cast<T>(1) << (BitLength(x) - 1);
 }

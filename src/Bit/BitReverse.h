@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../Concept/TriviallyCopyable.h"
-#include "../Trait/MakeIntegerType.h"
+#include "../Concepts/TriviallyCopyable.h"
+#include "../Traits/MakeIntegerType.h"
 #include "../Macro.h"
 
 #include <cstdint>
@@ -24,8 +24,8 @@ extern "C" {
 
 
 
-namespace Detail {
-    namespace Common {
+namespace detail {
+    namespace common {
         static constexpr uint8_t BitReverseTable[256] {
             0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
             0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8,
@@ -101,7 +101,7 @@ namespace Detail {
             return x;
         }
 #endif
-    } // namespace Common
+    } // namespace common
 
 
 
@@ -134,11 +134,11 @@ namespace Detail {
 
 
     [[nodiscard]] constexpr uint8_t BitReverse(uint8_t x) noexcept {
-        return Common::BitReverse(x);
+        return common::BitReverse(x);
     }
 
     [[nodiscard]] constexpr uint16_t BitReverse(uint16_t x) noexcept {
-        return Common::BitReverse(x);
+        return common::BitReverse(x);
     }
 
     [[nodiscard]] constexpr uint32_t BitReverse(uint32_t x) noexcept {
@@ -152,7 +152,7 @@ namespace Detail {
             return BitReverseAfterByteSwap(static_cast<uint32_t>(_byteswap_ulong(x)));
         }
 #   endif
-        return Common::BitReverse(x);
+        return common::BitReverse(x);
 #endif
     }
 
@@ -167,7 +167,7 @@ namespace Detail {
             return BitReverseAfterByteSwap(static_cast<uint64_t>(_byteswap_uint64(x)));
         }
 #   endif
-        return Common::BitReverse(x);
+        return common::BitReverse(x);
 #endif
     }
 
@@ -191,18 +191,16 @@ namespace Detail {
             return __builtin_bit_cast(__uint128_t, _mm_or_si128(low, high));
         }
 #       endif
-        return Common::BitReverse(x);
+        return common::BitReverse(x);
 #   endif
     }
 #endif // __SIZEOF_INT128__
-} // namespace Detail
+} // namespace detail
 
 
 
-namespace Bit {
-    template <Concept::TriviallyCopyable T>
-    [[nodiscard]] constexpr T BitReverse(T x) noexcept {
-        return __builtin_bit_cast(T, Detail::BitReverse(__builtin_bit_cast(Trait::MakeUInt_T<sizeof(T)>, x)));
-    }
+template <concepts::TriviallyCopyable T>
+[[nodiscard]] constexpr T BitReverse(T x) noexcept {
+    return __builtin_bit_cast(T, detail::BitReverse(__builtin_bit_cast(traits::MakeUInt_T<sizeof(T)>, x)));
 }
 
